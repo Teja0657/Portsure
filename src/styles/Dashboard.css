@@ -1,0 +1,203 @@
+
+/* ================= DESIGN TOKENS ================= */
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #3730a3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --bg-main: #f1f5f9;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --border-color: #e2e8f0;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+/* ================= BASE ================= */
+.dashboard {
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-dark);
+}
+
+/* ================= TOP NAVIGATION ================= */
+.dashboard-header {
+  background: #1e293b; /* Dark Navy Header */
+  color: white;
+  padding: 0 40px;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-header h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(to right, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-header div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dashboard-header span {
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.dashboard-header button {
+  background: var(--danger);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: opacity 0.2s;
+}
+
+/* ================= LAYOUT CONTAINER ================= */
+.dashboard-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ================= SECTION TITLES ================= */
+h3 {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary);
+  padding-left: 12px;
+}
+
+/* ================= PROFILE INFO CARDS ================= */
+/* This styles the <p> tags in the profile section as cards */
+.dashboard-content > p {
+  display: inline-block;
+  background: white;
+  padding: 15px 25px;
+  margin: 0 10px 10px 0;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.9rem;
+}
+
+.dashboard-content > p b {
+  color: var(--text-light);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ================= FORMS ================= */
+.edit-profile-form, .create-portfolio-section {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-top: 20px;
+}
+
+input, select {
+  width: 100%;
+  max-width: 100%; /* Fill container */
+  margin-bottom: 15px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* ================= TABLES ================= */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* Gap between rows */
+  margin-top: 10px;
+}
+
+th {
+  background: none;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  padding: 10px 20px;
+  text-align: left;
+}
+
+td {
+  background: white;
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+td:first-child {
+  border-left: 1px solid var(--border-color);
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+td:last-child {
+  border-right: 1px solid var(--border-color);
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* ================= ACTION BUTTONS ================= */
+button {
+  background: var(--primary);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ================= ADMIN SPECIFIC ================= */
+.investor-id-cell {
+  background: #e0e7ff;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .dashboard-header { padding: 0 20px; }
+  .dashboard-content > p { width: 100%; margin-right: 0; }
+  table { display: block; overflow-x: auto; }
+}
