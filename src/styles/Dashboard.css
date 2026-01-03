@@ -146,9 +146,9 @@ body {
   padding: 12px;
   border: 1px solid rgba(255,255,255,0.1);
   background: transparent;
-  color: #cbd5e1;
+  color: #f30c0c;
   border-radius: 10px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -358,3 +358,74 @@ tr:hover { background-color: #f8fafc; }
 .detail-item { display: flex; flex-direction: column; gap: 8px; }
 .detail-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
 .detail-value { font-size: 1rem; font-weight: 600; color: var(--text-main); padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  /* Collapse Sidebar to Icons only */
+  .sidebar {
+    width: 70px;
+    transition: width 0.3s;
+  }
+  
+  .brand-text, 
+  .user-info, 
+  .nav-label, 
+  .sidebar-header .brand-text {
+    display: none;
+  }
+
+  .sidebar-header {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 15px;
+  }
+
+  .sidebar-footer {
+    padding: 10px;
+  }
+  
+  .user-badge {
+    justify-content: center;
+  }
+  
+  .logout-btn {
+    font-size: 0.7rem;
+    padding: 5px;
+  }
+
+  /* Adjust Main Content area */
+  .main-content {
+    margin-left: 70px; /* Match new sidebar width */
+    padding: 20px;
+  }
+
+  /* Make Tables Scrollable horizontally */
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 500px; /* Force scroll on very small screens */
+  }
+
+  /* Profile Card Stacking */
+  .profile-header-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .profile-details-list {
+    grid-template-columns: 1fr; /* Stack details vertically */
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* Inputs */
+  .form-card {
+    padding: 20px;
+  }
+}
