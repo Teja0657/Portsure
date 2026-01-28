@@ -21,16 +21,18 @@ export default function Dashboard({ goToLogin }) {
 
   // Data States
   const [editProfile, setEditProfile] = useState({ name: "", email: "", mobile: "" });
-  
-  // NEW: Asset Allocation State
+  const [passForm, setPassForm] = useState({ oldPassword: "", newPassword: "", confirmPassword: "" });
+
+  // CHANGED: Replaced 'amount' with 'quantity' and 'price'
   const [portfolio, setPortfolio] = useState({ 
-    id: null, // Used for editing existing portfolios
+    id: null, 
     name: "", 
+    quantity: "", 
+    price: "", 
     equities: "", 
     bonds: "", 
     derivatives: "" 
   });
-  
   const [selectedInvestor, setSelectedInvestor] = useState(null);
 
   useEffect(() => {
@@ -55,6 +57,11 @@ export default function Dashboard({ goToLogin }) {
     goToLogin();
   };
 
+  const getUsedBalance = (u) => {
+    if (!u.portfolios) return 0;
+    return u.portfolios.reduce((sum, p) => sum + (parseInt(p.investmentAmount) || 0), 0);
+  };
+
   const saveProfile = () => {
     const updatedUsers = [...users];
     const index = updatedUsers.findIndex((u) => u.id === user.id);
@@ -67,39 +74,88 @@ export default function Dashboard({ goToLogin }) {
     setActiveTab("profile");
   };
 
-  // --- NEW: Handle Asset Logic ---
+  const handleUpdatePassword = () => {
+    if (!passForm.oldPassword || !passForm.newPassword) return alert("Please fill all fields");
+    if (passForm.newPassword !== passForm.confirmPassword) return alert("New passwords do not match");
+    
+    if (user.password !== passForm.oldPassword) return alert("Old password is incorrect");
+
+    const updatedUsers = [...users];
+    const index = updatedUsers.findIndex((u) => u.id === user.id);
+    updatedUsers[index].password = passForm.newPassword;
+    
+    localStorage.setItem("portsure_users", JSON.stringify(updatedUsers));
+    localStorage.setItem("loggedUser", JSON.stringify(updatedUsers[index]));
+    
+    alert("Password updated successfully!");
+    setPassForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+    setActiveTab("profile");
+  };
+
   const handlePortfolioSubmit = () => {
     if (!portfolio.name) return alert("Please enter portfolio name");
     
+    // CHANGED: Calculate amount based on Quantity * Price
+    const qty = parseInt(portfolio.quantity) || 0;
+    const price = parseFloat(portfolio.price) || 0;
+
+    if (qty <= 0) return alert("Please enter a valid quantity");
+    if (price <= 0) return alert("Please enter a valid price");
+
+    const reqAmount = qty * price; // Total Investment
+
+    // Default to 100,000 if not set on user
+    const totalLimit = user.totalBalance !== undefined ? user.totalBalance : 100000;
+    const currentUsed = getUsedBalance(user);
+    
+    let balanceCheckAmount = currentUsed + reqAmount;
+    if (portfolio.id) {
+       const existingP = user.portfolios.find(p => p.portfolioId === portfolio.id);
+       if (existingP) balanceCheckAmount -= (parseInt(existingP.investmentAmount) || 0);
+    }
+
+    if (balanceCheckAmount > totalLimit) {
+       const available = totalLimit - (portfolio.id ? (currentUsed - (user.portfolios.find(p=>p.portfolioId===portfolio.id)?.investmentAmount||0)) : currentUsed);
+       return alert(`Insufficient Balance! You have ₹${available.toLocaleString()} remaining.`);
+    }
+
     const eq = parseInt(portfolio.equities) || 0;
     const bd = parseInt(portfolio.bonds) || 0;
     const dr = parseInt(portfolio.derivatives) || 0;
-    
+
     if ((eq + bd + dr) !== 100) {
       return alert(`Total allocation must be exactly 100%. Current total: ${eq + bd + dr}%`);
     }
 
     const updatedUsers = [...users];
     const userIndex = updatedUsers.findIndex((u) => u.id === user.id);
-    
     if (!updatedUsers[userIndex].portfolios) updatedUsers[userIndex].portfolios = [];
 
-    // Check if we are editing an existing portfolio
     if (portfolio.id) {
+       // EDIT EXISTING
        const pIndex = updatedUsers[userIndex].portfolios.findIndex(p => p.portfolioId === portfolio.id);
        if (pIndex !== -1) {
          updatedUsers[userIndex].portfolios[pIndex].name = portfolio.name;
+         
+         // Store new fields
+         updatedUsers[userIndex].portfolios[pIndex].quantity = qty;
+         updatedUsers[userIndex].portfolios[pIndex].price = price;
+         updatedUsers[userIndex].portfolios[pIndex].investmentAmount = reqAmount; // Calculated
+
          updatedUsers[userIndex].portfolios[pIndex].assets = { equities: eq, bonds: bd, derivatives: dr };
-         updatedUsers[userIndex].portfolios[pIndex].status = "PENDING"; // Reset to pending on edit
+         updatedUsers[userIndex].portfolios[pIndex].status = "PENDING";
          alert("Portfolio updated! Request sent to Asset Manager.");
        }
     } else {
-      // Create New
+      // CREATE NEW
       const newPortfolio = {
         portfolioId: `PF-${Date.now()}`,
         name: portfolio.name,
+        quantity: qty,
+        price: price,
+        investmentAmount: reqAmount, // Calculated
         date: new Date().toLocaleDateString(),
-        status: "PENDING", // Default status
+        status: "PENDING", 
         assets: { equities: eq, bonds: bd, derivatives: dr }
       };
       updatedUsers[userIndex].portfolios.push(newPortfolio);
@@ -112,45 +168,68 @@ export default function Dashboard({ goToLogin }) {
     setUser(updatedUsers[userIndex]);
     
     // Reset Form
-    setPortfolio({ id: null, name: "", equities: "", bonds: "", derivatives: "" });
+    setPortfolio({ id: null, name: "", quantity: "", price: "", equities: "", bonds: "", derivatives: "" });
     setActiveTab("view");
   };
 
   const handleEditRequest = (p) => {
+    // CHANGED: Load quantity and price into state
     setPortfolio({
       id: p.portfolioId,
       name: p.name,
+      quantity: p.quantity || 0,
+      price: p.price || 0,
       equities: p.assets.equities,
       bonds: p.assets.bonds,
       derivatives: p.assets.derivatives
     });
-    setActiveTab("create"); // Re-use create tab for editing
+    setActiveTab("create"); 
   };
 
+  // --- APPROVAL LOGIC ---
   const handleApprove = (investorId, portfolioId) => {
     const updatedUsers = [...users];
     const uIndex = updatedUsers.findIndex(u => u.id === investorId);
     const pIndex = updatedUsers[uIndex].portfolios.findIndex(p => p.portfolioId === portfolioId);
     
     updatedUsers[uIndex].portfolios[pIndex].status = "APPROVED";
-    
     localStorage.setItem("portsure_users", JSON.stringify(updatedUsers));
     setUsers(updatedUsers);
     
-    // Update local view if viewing that investor
     if (selectedInvestor && selectedInvestor.id === investorId) {
       setSelectedInvestor(updatedUsers[uIndex]);
     }
     alert("Portfolio Assets Approved!");
   };
 
+  // --- REJECTION LOGIC ---
+  const handleReject = (investorId, portfolioId) => {
+    const updatedUsers = [...users];
+    const uIndex = updatedUsers.findIndex(u => u.id === investorId);
+    
+    updatedUsers[uIndex].portfolios = updatedUsers[uIndex].portfolios.filter(p => p.portfolioId !== portfolioId);
+    
+    localStorage.setItem("portsure_users", JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
+    
+    if (selectedInvestor && selectedInvestor.id === investorId) {
+      setSelectedInvestor(updatedUsers[uIndex]);
+    }
+    alert("Portfolio rejected and deleted. Funds have been returned to the investor's available balance.");
+  };
+
   const getStatusClass = (status) => {
-    return status === 'APPROVED' ? 'status-low' : 'status-med'; // Reuse CSS classes: low=green, med=yellow
+    return status === 'APPROVED' ? 'status-low' : 'status-med'; 
   };
 
   // --- CONTENT RENDERER ---
   const renderContent = () => {
+    // 1. PROFILE TAB
     if (activeTab === "profile") {
+      const totalBal = user.totalBalance !== undefined ? user.totalBalance : 100000;
+      const usedBal = getUsedBalance(user);
+      const availableBal = totalBal - usedBal;
+      
       return (
         <div className="profile-section-container">
           <div className="profile-header-banner">
@@ -173,22 +252,69 @@ export default function Dashboard({ goToLogin }) {
               <span className="detail-label">Mobile Number</span>
               <span className="detail-value">{user.mobile}</span>
             </div>
+            
+            {user.role === "INVESTOR" && (
+                <div className="detail-item">
+                  <span className="detail-label">Available Balance</span>
+                  <span className="detail-value" style={{color:'#10b981', fontWeight:'bold'}}>
+                    ₹{availableBal.toLocaleString()}
+                  </span>
+                </div>
+            )}
+
           </div>
-          <div style={{padding: "0 30px 30px 30px"}}>
+          <div style={{padding: "0 30px 30px 30px", display:'flex', gap:'10px'}}>
              <button className="btn-secondary" onClick={() => setActiveTab('edit')}>Edit Profile Details</button>
+             <button className="btn-secondary" onClick={() => setActiveTab('update-password')}>Update Password</button>
           </div>
         </div>
       );
     }
 
+    if (activeTab === "update-password") {
+        return (
+            <>
+             <div className="page-header">
+                <h2>Update Security</h2>
+                <p>Change your account password.</p>
+             </div>
+             <div className="form-card" style={{maxWidth:'500px'}}>
+                <div className="form-group">
+                  <label>Current Password</label>
+                  <input type="password" value={passForm.oldPassword} onChange={(e) => setPassForm({...passForm, oldPassword: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>New Password</label>
+                  <input type="password" value={passForm.newPassword} onChange={(e) => setPassForm({...passForm, newPassword: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>Confirm New Password</label>
+                  <input type="password" value={passForm.confirmPassword} onChange={(e) => setPassForm({...passForm, confirmPassword: e.target.value})} />
+                </div>
+                <button className="btn-primary" onClick={handleUpdatePassword}>Update Password</button>
+                <button className="btn-secondary" style={{marginLeft:'10px'}} onClick={() => setActiveTab('profile')}>Cancel</button>
+             </div>
+            </>
+        )
+    }
+
     // 2. CREATE / EDIT PORTFOLIO TAB
     if (activeTab === "create") {
+      const totalBal = user.totalBalance !== undefined ? user.totalBalance : 100000;
+      const usedBal = getUsedBalance(user);
+      const adjustedUsed = portfolio.id ? (usedBal - (user.portfolios.find(p=>p.portfolioId === portfolio.id)?.investmentAmount || 0)) : usedBal;
+      const available = totalBal - adjustedUsed;
+      
+      // Calculate display amount dynamically
+      const displayTotal = (parseInt(portfolio.quantity) || 0) * (parseFloat(portfolio.price) || 0);
+
       return (
         <>
           <div className="page-header">
             <h2>{portfolio.id ? "Edit Portfolio" : "New Investment"}</h2>
             <p>{portfolio.id ? "Update assets. Changes require re-approval." : "Request asset allocation from Manager."}</p>
           </div>
+    
           <div className="form-card" style={{maxWidth: '600px'}}>
             <div className="form-group">
               <label>Portfolio Name</label>
@@ -199,7 +325,38 @@ export default function Dashboard({ goToLogin }) {
               />
             </div>
             
-            {/* NEW: Asset Allocation Section */}
+            {/* CHANGED: Split Investment Amount into Quantity and Price */}
+            <div style={{display: 'flex', gap: '15px'}}>
+              <div className="form-group" style={{flex: 1}}>
+                <label>Quantity</label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 10" 
+                  value={portfolio.quantity} 
+                  onChange={(e) => setPortfolio({ ...portfolio, quantity: e.target.value })} 
+                />
+              </div>
+              <div className="form-group" style={{flex: 1}}>
+                <label>Price per Unit (₹)</label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 250" 
+                  value={portfolio.price} 
+                  onChange={(e) => setPortfolio({ ...portfolio, price: e.target.value })} 
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+               <label>Total Investment Amount (Calculated)</label>
+               <div style={{fontSize:'0.8rem', color:'#64748b', marginBottom:'5px'}}>Available Limit: ₹{available.toLocaleString()}</div>
+               <input 
+                  disabled
+                  value={`₹${displayTotal.toLocaleString()}`}
+                  style={{backgroundColor: '#f1f5f9', cursor: 'not-allowed', color: '#334155', fontWeight: 'bold'}}
+               />
+            </div>
+
             <div style={{background:'#f8fafc', padding:'20px', borderRadius:'12px', marginBottom:'20px', border:'1px dashed #cbd5e1'}}>
               <h4 style={{margin:'0 0 15px 0', color:'#475569'}}>Asset Allocation (Total must be 100%)</h4>
               <div className="form-group">
@@ -218,11 +375,11 @@ export default function Dashboard({ goToLogin }) {
                 Total: {(parseInt(portfolio.equities)||0) + (parseInt(portfolio.bonds)||0) + (parseInt(portfolio.derivatives)||0)}%
               </div>
             </div>
-
-            <button className="btn-primary" onClick={handlePortfolioSubmit}>
+      
+             <button className="btn-primary" onClick={handlePortfolioSubmit}>
               {portfolio.id ? "Submit Changes for Approval" : "Request Assets"}
             </button>
-            {portfolio.id && <button className="btn-secondary" style={{marginLeft:'10px'}} onClick={() => { setPortfolio({id:null, name:"", equities:"", bonds:"", derivatives:""}); setActiveTab("view"); }}>Cancel</button>}
+            {portfolio.id && <button className="btn-secondary" style={{marginLeft:'10px'}} onClick={() => { setPortfolio({id:null, name:"", quantity:"", price:"", equities:"", bonds:"", derivatives:""}); setActiveTab("view"); }}>Cancel</button>}
           </div>
         </>
       );
@@ -245,9 +402,11 @@ export default function Dashboard({ goToLogin }) {
               </div>
             ) : (
               <table>
-                <thead>
+                 <thead>
                   <tr>
                     <th>Name</th>
+                    <th>Qty / Price</th>
+                    <th>Total</th>
                     <th>Assets</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -259,6 +418,20 @@ export default function Dashboard({ goToLogin }) {
                       <td>
                         <div style={{fontWeight:'700'}}>{p.name}</div>
                         <div style={{fontSize:'0.75rem', color:'#94a3b8', fontFamily:'monospace'}}>{p.portfolioId}</div>
+                      </td>
+                      <td>
+                         <div style={{fontSize:'0.85rem'}}>
+                            Qty: <b>{p.quantity || '-'}</b>
+                         </div>
+                         <div style={{fontSize:'0.85rem'}}>
+                            Price: <b>₹{p.price || '-'}</b>
+                         </div>
+                      </td>
+                      <td>
+                        {/* Display the calculated Total */}
+                        <span style={{fontWeight:'bold', color:'#0f172a'}}>
+                            ₹{(parseInt(p.investmentAmount)||0).toLocaleString()}
+                        </span>
                       </td>
                       <td>
                         {p.status === 'APPROVED' ? (
@@ -295,45 +468,59 @@ export default function Dashboard({ goToLogin }) {
              <button className="btn-secondary" onClick={() => setSelectedInvestor(null)} style={{marginBottom:'20px'}}>
                ← Back
              </button>
-             <div className="page-header">
+              <div className="page-header">
                <h2>{selectedInvestor.name}</h2>
                <p>Manage Approvals</p>
-             </div>
-             
-             <div className="table-container">
+              </div>
+              
+              <div className="table-container">
                {selectedInvestor.portfolios && selectedInvestor.portfolios.length > 0 ? (
-                 <table>
+                  <table>
                    <thead>
-                     <tr><th>Portfolio</th><th>Requested Allocation</th><th>Status</th><th>Action</th></tr>
+                     <tr><th>Portfolio</th><th>Details</th><th>Amount</th><th>Alloc.</th><th>Status</th><th>Action</th></tr>
                    </thead>
                    <tbody>
-                     {selectedInvestor.portfolios.map((p) => (
+                   {selectedInvestor.portfolios.map((p) => (
                        <tr key={p.portfolioId}>
                          <td>
                            <b>{p.name}</b>
                            <div style={{fontSize:'0.75rem'}}>{p.date}</div>
                          </td>
                          <td>
+                            <div style={{fontSize:'0.8rem'}}>Qty: {p.quantity || 'N/A'}</div>
+                            <div style={{fontSize:'0.8rem'}}>Price: ₹{p.price || 'N/A'}</div>
+                         </td>
+                         <td>₹{(parseInt(p.investmentAmount)||0).toLocaleString()}</td>
+                         <td>
                             <div style={{fontSize:'0.85rem'}}>E: {p.assets.equities}% | B: {p.assets.bonds}% | D: {p.assets.derivatives}%</div>
                          </td>
                          <td><span className={`status-pill ${getStatusClass(p.status)}`}>{p.status}</span></td>
                          <td>
-                           {p.status === 'PENDING' && (
-                             <button 
-                               className="btn-primary" 
-                               style={{padding:'6px 12px', fontSize:'0.75rem'}}
-                               onClick={() => handleApprove(selectedInvestor.id, p.portfolioId)}
-                             >
-                               Approve
-                             </button>
+                            {p.status === 'PENDING' && (
+                              <div style={{display:'flex', gap:'5px'}}>
+                               <button 
+                                 className="btn-primary" 
+                                 style={{padding:'6px 12px', fontSize:'0.75rem'}}
+                                 onClick={() => handleApprove(selectedInvestor.id, p.portfolioId)}
+                               >
+                                Approve
+                               </button>
+                               <button 
+                                 className="btn-primary" 
+                                 style={{padding:'6px 12px', fontSize:'0.75rem', background: '#ef4444', border:'1px solid #ef4444'}}
+                                 onClick={() => handleReject(selectedInvestor.id, p.portfolioId)}
+                               >
+                                Reject
+                               </button>
+                              </div>
                            )}
                            {p.status === 'APPROVED' && <span style={{color:'#10b981', fontSize:'0.8rem', fontWeight:'bold'}}>✓ Active</span>}
-                         </td>
+                        </td>
                        </tr>
                      ))}
                    </tbody>
                  </table>
-               ) : <div style={{padding:'30px', textAlign:'center'}}>No portfolios.</div>}
+                ) : <div style={{padding:'30px', textAlign:'center'}}>No portfolios.</div>}
              </div>
           </>
         )
@@ -361,7 +548,7 @@ export default function Dashboard({ goToLogin }) {
                     </td>
                     <td>
                       <button className="btn-secondary" style={{padding:'8px 16px', fontSize:'0.8rem'}} onClick={() => setSelectedInvestor(inv)}>
-                         View Portfolios
+                          View Portfolios
                       </button>
                     </td>
                   </tr>
@@ -412,7 +599,7 @@ export default function Dashboard({ goToLogin }) {
           </button>
           {user.role === "INVESTOR" && (
             <>
-              <button className={`nav-item ${activeTab === 'create' ? 'active' : ''}`} onClick={() => {setPortfolio({id:null, name:"", equities:"", bonds:"", derivatives:""}); setActiveTab('create');}}>
+              <button className={`nav-item ${activeTab === 'create' ? 'active' : ''}`} onClick={() => {setPortfolio({id:null, name:"", quantity:"", price:"", equities:"", bonds:"", derivatives:""}); setActiveTab('create');}}>
                 <IconCreate /> <span className="nav-label">Create Portfolio</span>
               </button>
               <button className={`nav-item ${activeTab === 'view' ? 'active' : ''}`} onClick={() => setActiveTab('view')}>

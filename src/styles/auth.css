@@ -1,6 +1,14 @@
 /* auth.css */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* --- MOVED FROM INDEX.CSS --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* ---------------------------- */
+
 :root {
   /* --- VIBRANT PALETTE --- */
   --primary: #4f46e5;
@@ -14,14 +22,15 @@
 }
 
 body {
-  margin: 0;
-  padding: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #f1f5f9; /* Light Grey Background */
   color: var(--text-main);
   overflow-x: hidden;
+  /* margin: 0; -> Removed as it is now covered by the * selector above, but keeping it here doesn't hurt */
 }
+
+/* ... REMAINING CSS SAME AS BEFORE ... */
 
 /* ================= PAGE CONTAINER ================= */
 .login-page {
@@ -30,16 +39,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px; /* Padding for mobile screens */
+  padding: 20px;
 }
 
-/* ================= MAIN CARD WRAPPER ================= */
 .auth-card {
   width: 100%;
-  max-width: 520px; /* Constrain width for a nice centered box */
+  max-width: 520px;
   background: white;
   border-radius: 24px;
-  /* Elegant floating shadow */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
   overflow: hidden; 
   position: relative;
@@ -47,10 +54,9 @@ body {
   flex-direction: column;
 }
 
-/* ================= FORM SECTION (Centered) ================= */
 .auth-right {
   width: 100%;
-  padding: 50px 40px; /* Balanced padding */
+  padding: 50px 40px;
   background: white;
   display: flex;
   flex-direction: column;
@@ -62,7 +68,7 @@ body {
   margin-bottom: 35px; 
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center align logo and title */
+  align-items: center;
   text-align: center;
 }
 
@@ -101,12 +107,11 @@ body {
   letter-spacing: 1.5px;
   line-height: 1.5;
   margin-top: 4px;
-  /* Removed border-left since it's now centered */
 }
 
 /* HEADINGS */
 .auth-header {
-  text-align: center; /* Center the "Welcome back" text */
+  text-align: center;
   margin-bottom: 30px;
 }
 
@@ -223,7 +228,7 @@ input::placeholder { color: #cbd5e1; font-weight: 500; }
 /* LINKS & FOOTER */
 .form-footer {
   display: flex;
-  justify-content: flex-end; /* Align "Manage Password" to right */
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;
 }

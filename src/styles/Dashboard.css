@@ -1,6 +1,14 @@
 /* Dashboard.css */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* --- MOVED FROM INDEX.CSS --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* ---------------------------- */
+
 :root {
   /* --- Shared Variables from Auth --- */
   --primary: #4f46e5;
@@ -23,7 +31,6 @@
 }
 
 body {
-  margin: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
@@ -67,7 +74,6 @@ body {
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.5px;
-  /* Gradient Text for Dark Background */
   background: linear-gradient(to right, #818cf8, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -169,36 +175,43 @@ body {
 /* ================= CARDS & FORMS ================= */
 .form-card, .table-container, .profile-section-container {
   background: var(--bg-card);
-  border-radius: 20px; /* Softer card radius */
+  border-radius: 20px;
   box-shadow: var(--shadow-card);
   padding: 30px;
   border: 1px solid #e2e8f0;
 }
 
-.profile-section-container { padding: 0; overflow: hidden; max-width: 800px; }
+.profile-section-container { 
+  padding: 0;
+  overflow: hidden; 
+  max-width: 700px;
+  margin-top: 20px;
+}
 
 .profile-header-banner {
   background: var(--primary-gradient);
-  padding: 50px;
+  padding: 30px 35px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   color: white;
 }
 
 .profile-header-banner .large-avatar {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: white;
   color: var(--primary);
-  border-radius: 24px;
-  font-size: 2.5rem;
+  border-radius: 20px;
+  font-size: 2.2rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
+
+.profile-header-banner h2 { margin: 0 0 8px 0; font-size: 1.8rem; }
 
 .role-tag {
   background: rgba(255,255,255,0.2);
@@ -212,15 +225,15 @@ body {
 }
 
 .profile-details-list {
-  padding: 40px;
+  padding: 30px 35px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 25px;
 }
 
 .detail-item { display: flex; flex-direction: column; gap: 8px; }
-.detail-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-.detail-value { font-size: 1.1rem; font-weight: 600; color: var(--text-main); padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+.detail-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+.detail-value { font-size: 1rem; font-weight: 600; color: var(--text-main); padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
 
 /* INPUTS */
 .form-group { margin-bottom: 24px; }
@@ -291,141 +304,19 @@ tr:hover { background-color: #f8fafc; }
 .status-med { background: #fef9c3; color: #a16207; }
 .status-high { background: #fee2e2; color: #b91c1c; }
 
-/* --- REPLACE THESE CLASSES IN YOUR dashboard.css --- */
-
-.form-card, .table-container, .profile-section-container {
-  background: var(--bg-card);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
-  padding: 30px;
-  border: 1px solid #e2e8f0;
-}
-
-/* MODIFIED: Made max-width smaller and added top margin since header is gone */
-.profile-section-container { 
-  padding: 0; 
-  overflow: hidden; 
-  max-width: 700px; /* Was 800px */
-  margin-top: 20px; /* Adds breathing room at the top */
-}
-
-/* MODIFIED: Reduced padding significantly */
-.profile-header-banner {
-  background: var(--primary-gradient);
-  padding: 30px 35px; /* Was 50px */
-  display: flex;
-  align-items: center;
-  gap: 20px; /* Was 24px */
-  color: white;
-}
-
-/* MODIFIED: Slightly smaller avatar */
-.profile-header-banner .large-avatar {
-  width: 80px; /* Was 90px */
-  height: 80px; /* Was 90px */
-  background: white;
-  color: var(--primary);
-  border-radius: 20px; /* Was 24px */
-  font-size: 2.2rem; /* Was 2.5rem */
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-.profile-header-banner h2 { margin: 0 0 8px 0; font-size: 1.8rem; }
-
-.role-tag {
-  background: rgba(255,255,255,0.2);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-/* MODIFIED: Reduced padding and gap */
-.profile-details-list {
-  padding: 30px 35px; /* Was 40px */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px; /* Was 40px */
-}
-
-.detail-item { display: flex; flex-direction: column; gap: 8px; }
-.detail-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-.detail-value { font-size: 1rem; font-weight: 600; color: var(--text-main); padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
 /* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
-  /* Collapse Sidebar to Icons only */
-  .sidebar {
-    width: 70px;
-    transition: width 0.3s;
-  }
-  
-  .brand-text, 
-  .user-info, 
-  .nav-label, 
-  .sidebar-header .brand-text {
-    display: none;
-  }
-
-  .sidebar-header {
-    justify-content: center;
-    padding: 0;
-  }
-
-  .nav-item {
-    justify-content: center;
-    padding: 15px;
-  }
-
-  .sidebar-footer {
-    padding: 10px;
-  }
-  
-  .user-badge {
-    justify-content: center;
-  }
-  
-  .logout-btn {
-    font-size: 0.7rem;
-    padding: 5px;
-  }
-
-  /* Adjust Main Content area */
-  .main-content {
-    margin-left: 70px; /* Match new sidebar width */
-    padding: 20px;
-  }
-
-  /* Make Tables Scrollable horizontally */
-  .table-container {
-    overflow-x: auto;
-  }
-  
-  table {
-    min-width: 500px; /* Force scroll on very small screens */
-  }
-
-  /* Profile Card Stacking */
-  .profile-header-banner {
-    flex-direction: column;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .profile-details-list {
-    grid-template-columns: 1fr; /* Stack details vertically */
-    gap: 20px;
-    padding: 20px;
-  }
-  
-  /* Inputs */
-  .form-card {
-    padding: 20px;
-  }
+  .sidebar { width: 70px; transition: width 0.3s; }
+  .brand-text, .user-info, .nav-label, .sidebar-header .brand-text { display: none; }
+  .sidebar-header { justify-content: center; padding: 0; }
+  .nav-item { justify-content: center; padding: 15px; }
+  .sidebar-footer { padding: 10px; }
+  .user-badge { justify-content: center; }
+  .logout-btn { font-size: 0.7rem; padding: 5px; }
+  .main-content { margin-left: 70px; padding: 20px; }
+  .table-container { overflow-x: auto; }
+  table { min-width: 500px; }
+  .profile-header-banner { flex-direction: column; text-align: center; padding: 20px; }
+  .profile-details-list { grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+  .form-card { padding: 20px; }
 }

@@ -14,7 +14,7 @@ const PortSureLogo = () => (
 );
 
 export default function Login({ goToRegister, goToReset, goToDashboard }) {
-  const [role, setRole] = useState("INVESTOR");
+  const [role, setRole] = useState("MANAGER");
   const [emailOrId, setEmailOrId] = useState("");
   const [password, setPassword] = useState("");
 

@@ -1,10 +1,8 @@
-
-
 import { useState } from "react";
 import "../styles/auth.css";
 
 const DB_KEY = "portsure_users";
-const STAFF_SECRET_KEY = "PORT-ADMIN-2026"; 
+const STAFF_SECRET_KEY = "PORTSURE";
 
 const PortSureLogo = () => (
   <svg className="brand-logo-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -17,11 +15,12 @@ const PortSureLogo = () => (
 export default function Register({ goToDashboard, goToLogin }) {
   const [role, setRole] = useState("INVESTOR");
   const [form, setForm] = useState({ name: "", email: "", password: "", mobile: "" });
-  const [staffKey, setStaffKey] = useState(""); 
+  const [staffKey, setStaffKey] = useState("");
   const [errors, setErrors] = useState({});
 
   const nameRegex = /^[A-Za-z\s]*$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const passwordRules = {
     length: form.password.length >= 8,
     lowercase: /[a-z]/.test(form.password),
@@ -35,11 +34,13 @@ export default function Register({ goToDashboard, goToLogin }) {
     else setErrors((e) => ({ ...e, name: "" }));
     setForm({ ...form, name: v });
   };
+
   const handleEmail = (v) => {
     if (v && !emailRegex.test(v)) setErrors((e) => ({ ...e, email: "Please enter a valid email address" }));
     else setErrors((e) => ({ ...e, email: "" }));
     setForm({ ...form, email: v });
   };
+
   const handleMobile = (v) => {
     if (!/^\d*$/.test(v)) { setErrors((e) => ({ ...e, mobile: "Enter only numbers" })); return; }
     if (v.length > 10) { setErrors((e) => ({ ...e, mobile: "Maximum 10 digits only" })); return; }
@@ -51,32 +52,43 @@ export default function Register({ goToDashboard, goToLogin }) {
   const handleRegister = () => {
     const hasErrors = Object.values(errors).some(Boolean);
     const passwordValid = Object.values(passwordRules).every(Boolean);
+
     if (!form.name || !form.email || !form.password || !form.mobile) return alert("Please fill all fields");
+
     if (role !== "INVESTOR") {
       if (!staffKey) return alert("Please enter the Staff Registration Key");
       if (staffKey !== STAFF_SECRET_KEY) return alert("Invalid Registration Key. Access Denied.");
     }
+
     if (hasErrors || !passwordValid) return alert("Please resolve the validation errors");
+
     const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     if (users.some((u) => u.email === form.email)) return alert("User already exists with this email");
     
     let prefix = "INV";
     if (role === "COMPLIANCE") prefix = "CMP";
     if (role === "MANAGER") prefix = "MGR";
-    const newUser = { id: `${prefix}-${Date.now()}`, role, ...form, portfolios: [] };
+
+    const newUser = { 
+        id: `${prefix}-${Date.now()}`, 
+        role, 
+        ...form,
+        // CHANGE: Only add totalBalance if the role is INVESTOR
+        ...(role === "INVESTOR" && { totalBalance: 100000 }),
+        portfolios: [] 
+    };
 
     users.push(newUser);
     localStorage.setItem(DB_KEY, JSON.stringify(users));
-    alert(`Registration successful!\n\nYour ID is: ${newUser.id}`);
-    localStorage.setItem("loggedUser", JSON.stringify(newUser));
-    goToDashboard();
+    
+    alert(`Registration successful!\n\nYour ID is: ${newUser.id}\nPlease Login to continue.`);
+    goToLogin(); 
   };
 
   return (
     <div className="login-page">
       <div className="auth-card">
         <div className="auth-right">
-          
           <div className="brand-section">
             <div className="brand-header">
               <PortSureLogo />
