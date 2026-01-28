@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import "../styles/auth.css";
 
@@ -14,23 +12,27 @@ const PortSureLogo = () => (
 );
 
 export default function ResetPassword({ goToLogin }) {
-  const [mode, setMode] = useState("forgot");
-  const [form, setForm] = useState({ email: "", oldPassword: "", newPassword: "", confirmPassword: "" });
+  // CHANGE 4: Removed 'mode' state. This is now strictly Reset Password.
+  const [form, setForm] = useState({ email: "", newPassword: "", confirmPassword: "" });
+  
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = () => {
     if (!form.email) return alert("Please enter registered email");
     if (!isValidEmail(form.email)) return alert("Please enter a valid email address");
-    if (mode === "change" && !form.oldPassword) return alert("Please enter old password");
     if (!form.newPassword) return alert("Please enter new password");
     if (form.newPassword !== form.confirmPassword) return alert("Passwords do not match");
+
     const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     const index = users.findIndex((u) => u.email === form.email);
+
     if (index === -1) return alert("User not found with this email");
-    if (mode === "change" && users[index].password !== form.oldPassword) return alert("Old password is incorrect");
+
+    // In a real app, this would send an email link. Here we simulate a hard reset.
     users[index].password = form.newPassword;
     localStorage.setItem(DB_KEY, JSON.stringify(users));
-    alert(mode === "forgot" ? "Password reset successful" : "Password changed successfully");
+    
+    alert("Password reset successful. Please login with new credentials.");
     goToLogin();
   };
 
@@ -48,26 +50,14 @@ export default function ResetPassword({ goToLogin }) {
           </div>
 
           <div className="auth-header">
-            <h2>{mode === "forgot" ? "Reset Password" : "Change Password"}</h2>
-            <p>Update your credentials securely</p>
-          </div>
-
-          <div className="role-switch">
-            <label><input type="radio" checked={mode === "forgot"} onChange={() => setMode("forgot")} /> Reset</label>
-            <label><input type="radio" checked={mode === "change"} onChange={() => setMode("change")} /> Change</label>
+            <h2>Reset Password</h2>
+            <p>Recover your account access</p>
           </div>
 
           <div className="input-group">
             <span className="input-label">REGISTERED EMAIL</span>
             <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@company.com"/>
           </div>
-
-          {mode === "change" && (
-            <div className="input-group">
-              <span className="input-label">OLD PASSWORD</span>
-              <input type="password" value={form.oldPassword} onChange={(e) => setForm({ ...form, oldPassword: e.target.value })} placeholder="Enter old password"/>
-            </div>
-          )}
 
           <div className="input-group">
             <span className="input-label">NEW PASSWORD</span>
@@ -79,7 +69,7 @@ export default function ResetPassword({ goToLogin }) {
             <input type="password" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} placeholder="Confirm new password"/>
           </div>
 
-          <button className="auth-btn" onClick={handleSubmit}>SUBMIT REQUEST</button>
+          <button className="auth-btn" onClick={handleSubmit}>RESET PASSWORD</button>
           <p className="bottom-text">Back to <span onClick={goToLogin}>Login</span></p>
           <p className="copyright-footer">&copy; 2026 Portfolio Risk Analysis and Investment Compliance System</p>
         </div>
