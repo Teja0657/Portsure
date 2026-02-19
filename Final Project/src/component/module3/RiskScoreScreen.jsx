@@ -9,7 +9,7 @@ const COLORS = ["#2563eb", "#22c55e", "#f59e0b"];
 
 const calculateRiskValue = (allocation) => {
   const { Equity = 0, Bond = 0, Derivative = 0 } = allocation;
-  return Math.min(100, Math.round(Equity * 0.7 + Bond * 0.3 + Derivative * 1.5));
+  return Math.min(100, Math.round(Equity * 0.5 + Bond * 0.2 + Derivative * 0.8));
 };
 
 const getRiskLevelDetails = (score) => {

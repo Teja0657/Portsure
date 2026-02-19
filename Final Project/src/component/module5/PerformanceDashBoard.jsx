@@ -228,7 +228,7 @@ function PerformanceDashboard() {
   // Define navigation options early (before any returns)
   const myLoginOptions = (
     <div className="home-links">
-      <Link to="/investordashboard" className="ad">Home</Link>
+      <Link to="/investor" className="ad">Home</Link>
       <Link to="/portfolio-performances" className="ad active">Performance Dashboard</Link>
       <Link to="/export-reports" className="ad">Export Report</Link>
     </div>
@@ -247,7 +247,7 @@ function PerformanceDashboard() {
           <div className="empty-state">
             <h2>No Portfolios Found</h2>
             <p>You haven't created any portfolios yet. Please create a portfolio first to view performance data.</p>
-            <Link to="/investordashboard" className="empty-state-link">
+            <Link to="/investor" className="empty-state-link">
               Go to Dashboard
             </Link>
           </div>
@@ -269,7 +269,7 @@ function PerformanceDashboard() {
           <div style={{ textAlign: "center", padding: "50px", color: "#666" }}>
             <h2>No Portfolio Selected</h2>
             <p>Unable to load portfolio data. Please try again.</p>
-            <Link to="/investordashboard" style={{ color: "#0ea5e9", textDecoration: "underline" }}>
+            <Link to="/investor" style={{ color: "#0ea5e9", textDecoration: "underline" }}>
               Go to Dashboard
             </Link>
           </div>
@@ -306,7 +306,7 @@ function PerformanceDashboard() {
   // Update the Export Report link with reportPayload
   const myLoginOptionsWithReport = (
     <div className="home-links">
-      <Link to="/investordashboard" className="ad">Home</Link>
+      <Link to="/investor" className="ad">Home</Link>
       <Link to="/portfolio-performances" className="ad active">Performance Dashboard</Link>
       <Link to="/export-reports" state={{ reportData: reportPayload }} className="ad">
         Export Report

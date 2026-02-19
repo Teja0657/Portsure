@@ -55,9 +55,9 @@ export default function ExposureAlertScreen() {
   const [alertHistory, setAlertHistory] = useState([]);
 
   const [limits] = useState({
-    Equity: 70,
-    Bond: 10,
-    Derivative: 20,
+    Equity: 60,
+    Bond: 70,
+    Derivative: 50,
   });
 
   // Session & Auth
@@ -411,12 +411,12 @@ export default function ExposureAlertScreen() {
         </section>
       </main>
 
-      <Snackbar
+      {/* <Snackbar
         open={alertSent}
         autoHideDuration={3000}
         onClose={() => setAlertSent(false)}
         message="Compliance Alert & Audit Logged Successfully"
-      />
+      /> */}
 
       <footer className="home-footer1">
         <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />

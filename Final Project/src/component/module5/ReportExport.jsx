@@ -55,8 +55,8 @@ function ExportReport() {
   const myLoginOptions = (
     <div className='home-links'>
       <Link to='/investor' className='ad'>Home</Link>
-      <Link to='/P1' className='ad'>Performance Dashboard</Link>
-      <Link to='/P2' className='ad active'>Export Report</Link>
+      <Link to='/portfolio-performances' className='ad'>Performance Dashboard</Link>
+      <Link to='/export-reports' className='ad active'>Export Report</Link>
     </div>
   );
 

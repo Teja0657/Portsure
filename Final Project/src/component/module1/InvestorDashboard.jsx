@@ -220,7 +220,7 @@ export default function InvestorDashboard() {
 
       if (response.ok) {
         const data = await response.json();
-        alert(isEditMode ? `Request for PF-${editingPortfolioId} resent!` : `Success! Portfolio PF-${data.portfolioId} created.`);
+        // alert(isEditMode ? `Request for PF-${editingPortfolioId} resent!` : `Success! Portfolio PF-${data.portfolioId} created.`);
 
         fetchPortfolios();
         resetForm();
@@ -344,7 +344,7 @@ export default function InvestorDashboard() {
   return (
     <div className="dashboard-container">
       <Navbar loginOptions={navOptions} />
-      <div className='label'>Welcome {userData.fullName || "User"}!!</div>
+      <div className='label'>Welcome {userData.fullName || "User"}!</div>
 
       <main className="dashboard-content">
         {/* CREATE / EDIT PORTFOLIO VIEW */}
