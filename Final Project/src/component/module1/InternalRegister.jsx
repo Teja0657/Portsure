@@ -61,7 +61,7 @@ const InternalRegister = () => {
 
       if (response.ok) {
         alert("Internal User Registered Successfully! Please login.");
-        navigate('/login-one');
+        navigate('/login');
       } else {
         const errorText = await response.text();
         alert(errorText || "Registration failed. Check your secret key or email.");
@@ -124,7 +124,7 @@ const InternalRegister = () => {
           
           <div className="login-inline">
             <span className="login-text">Already registered?</span>
-            <Link to="/login-one" className="login-small-btn">Login</Link>
+            <Link to="/login" className="login-small-btn">Login</Link>
           </div>
         </form>
       </div>

@@ -9,7 +9,7 @@ export default function HomePage() {
   
   const myLoginOptions = (
     <div className="nav-actions">
-      <Link to="/login-one" className=" admin"> Login</Link>
+      <Link to="/login" className=" admin"> Login</Link>
     </div> 
   );
 

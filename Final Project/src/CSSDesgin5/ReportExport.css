@@ -16,8 +16,10 @@
   background: var(--bg-card);
   padding: var(--space-2xl);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-2xl);
+  box-shadow: var(--shadow-xl);
   border: 1px solid #e2e8f0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .export-preview h1 {
@@ -30,29 +32,53 @@
   letter-spacing: -0.05em;
 }
 
-.history-table {
+.history-table,
+.portfolio-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: var(--space-2xl);
-  border: 1px solid #f1f5f9;
+  background: white;
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  margin-bottom: var(--space-2xl);
+  min-width: 600px;
 }
 
-.history-table th {
+.history-table th,
+.portfolio-table th {
   background: var(--primary);
   color: white;
   text-align: left;
   padding: var(--space-lg);
   font-size: 0.75rem;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
 }
 
-.history-table td {
+.history-table td,
+.portfolio-table td {
   padding: var(--space-lg);
-  border-bottom: 1px solid #f1f5f9;
-  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
   color: var(--primary);
+  vertical-align: middle;
+}
+
+.history-table tbody tr,
+.portfolio-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.history-table tbody tr:hover,
+.portfolio-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.history-table tbody tr:last-child td,
+.portfolio-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .export-actions {
@@ -88,34 +114,91 @@
   box-shadow: var(--shadow-lg);
 }
 
-@media (max-width: 768px) {
-  .history-table thead {
+@media (max-width: 900px) {
+  .report-export-container {
+    margin: var(--space-lg) auto;
+    padding: 0 var(--space-sm);
+  }
+
+  .export-preview {
+    padding: var(--space-lg);
+  }
+
+  .history-table,
+  .portfolio-table {
+    min-width: unset;
+    font-size: 0.875rem;
+  }
+
+  .history-table thead,
+  .portfolio-table thead {
     display: none;
   }
 
-  .history-table tr {
+  .history-table tr,
+  .portfolio-table tr {
     display: block;
-    border: 1px solid #f1f5f9;
-    border-radius: var(--radius-md);
+    background: white;
     margin-bottom: var(--space-md);
-    padding: var(--space-md);
+    padding: var(--space-sm);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e2e8f0;
   }
 
-  .history-table td {
+  .history-table td,
+  .portfolio-table td {
     display: flex;
     justify-content: space-between;
     border: none;
-    padding: var(--space-xs) 0;
+    padding: var(--space-xs) var(--space-sm);
+    text-align: right;
   }
 
-  .history-table td::before {
+  .history-table td::before,
+  .portfolio-table td::before {
     content: attr(data-label);
     color: var(--text-muted);
     font-size: 0.75rem;
     text-transform: uppercase;
+    text-align: left;
   }
 
   .export-actions {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .export-preview {
+    padding: var(--space-md);
+  }
+
+  .export-preview h1 {
+    font-size: 1.5rem;
+  }
+
+  .export-actions button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-export-container {
+    padding: 0 var(--space-xs);
+  }
+
+  .export-preview {
+    padding: var(--space-sm);
+  }
+
+  .export-preview h1 {
+    font-size: 1.25rem;
+  }
+
+  .export-actions button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
   }
 }

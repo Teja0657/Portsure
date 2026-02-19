@@ -4,7 +4,7 @@ import Navbar from '../../Navbar/Navbar';
 import "../../CSSDesgin1/InvestorDashboard.css";
 import logo from "../../logo/logo.png";
 import Profilelogo from "../../logo/profilelogo.jpg";
-import NotificationPanel from './TradeCature';
+import NotificationPanel from '../module2/TradeCature';
 export default function InvestorDashboard() {
   const navigate = useNavigate();
   const loggedInUser = JSON.parse(localStorage.getItem('investor_user') || '{}');
@@ -31,6 +31,10 @@ export default function InvestorDashboard() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingPortfolioId, setEditingPortfolioId] = useState(null);
   const [alerts, setAlerts] = useState([]);
+  const [readAlerts, setReadAlerts] = useState(() => {
+    const saved = localStorage.getItem('investor_read_alerts');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
   const [editUser, setEditUser] = useState({ ...userData });
   const [passwords, setPasswords] = useState({ current: "", next: "" });
 
@@ -46,37 +50,49 @@ export default function InvestorDashboard() {
     } else {
       setExpandedRowId(id);
       try {
-
         const allowedStatuses = ['APPROVED', 'EXECUTED', 'COMPLETED'];
         const port = portfolioData.find(p => p.portfolioId === id);
         const status = String(port?.status || '').toUpperCase();
+
+        console.log(`Portfolio ${id} status: "${status}"`);
+        console.log(`Allowed statuses:`, allowedStatuses);
+        console.log(`Will fetch risk score:`, allowedStatuses.includes(status));
 
         if (!allowedStatuses.includes(status)) {
           // Mark riskScore as null for clarity in UI and skip the network call
           setPortfolioData(prevData => prevData.map(p =>
             p.portfolioId === id ? { ...p, riskScore: null } : p
           ));
+          console.log(`Skipping risk score fetch - status "${status}" not in allowed list`);
           return;
         }
 
+        console.log(`Fetching risk score from: http://localhost:8081/api/risk-scores/portfolio/${id}`);
         const response = await fetch(`http://localhost:8081/api/risk-scores/portfolio/${id}`, {
           headers: getAuthHeaders()
         });
+        
+        console.log(`Risk score API response status:`, response.status);
+        
         if (response.ok) {
           const scoreData = await response.json();
+          console.log(`Risk score data received:`, scoreData);
 
           setPortfolioData(prevData => prevData.map(port =>
             port.portfolioId === id ? { ...port, riskScore: scoreData } : port
           ));
         } else {
-
+          const errorText = await response.text();
+          console.error(`Risk score fetch failed: ${response.status} - ${errorText}`);
           setPortfolioData(prevData => prevData.map(p =>
             p.portfolioId === id ? { ...p, riskScore: null } : p
           ));
         }
       } catch (err) {
-
         console.error("Risk Score fetch error:", err);
+        setPortfolioData(prevData => prevData.map(p =>
+          p.portfolioId === id ? { ...p, riskScore: null } : p
+        ));
       }
     }
   };
@@ -132,6 +148,12 @@ export default function InvestorDashboard() {
       console.error("Error fetching notification alerts:", err);
     }
   }, [investorId, portfolioData, token]);
+  
+  // Persist readAlerts to localStorage
+  useEffect(() => {
+    localStorage.setItem('investor_read_alerts', JSON.stringify([...readAlerts]));
+  }, [readAlerts]);
+  
   useEffect(() => {
     if (portfolioData.length > 0) {
       fetchAlerts();
@@ -263,10 +285,15 @@ export default function InvestorDashboard() {
       console.error("Password Update Error:", err);
     }
   };
-  const filteredPortfolios = portfolioData.filter(port =>
-    (port.portfolioName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (port.portfolioId?.toString() || "").includes(searchTerm.toLowerCase())
-  );
+  const filteredPortfolios = portfolioData.filter(port => {
+    const searchLower = searchTerm.toLowerCase().trim();
+    const portfolioIdStr = `pf-${port.portfolioId}`.toLowerCase();
+    const portfolioNameLower = (port.portfolioName || "").toLowerCase();
+    
+    return portfolioNameLower.includes(searchLower) || 
+           portfolioIdStr.includes(searchLower) ||
+           port.portfolioId?.toString().includes(searchLower);
+  });
   const navOptions = (
     <div className="home-links">
       <button
@@ -275,9 +302,15 @@ export default function InvestorDashboard() {
       >
         Home
       </button>
-      <Link to="/P1" className="ad">Performance Dashboard</Link>
+      <Link to="/portfolio-performances" className="ad">Performance Dashboard</Link>
       <div className="notification-icon" onClick={() => setActiveView('notifications')} style={{ cursor: 'pointer', position: 'relative' }}>
-        🔔 {alerts.length > 0 && <span className="badge" style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', borderRadius: '50%', padding: '2px 5px', fontSize: '10px' }}>{alerts.length}</span>}
+        🔔 {(() => {
+          const unreadCount = alerts.filter((alert, index) => {
+            const alertId = alert.id || alert.alertId || index;
+            return !readAlerts.has(alertId);
+          }).length;
+          return unreadCount > 0 && <span className="badge" style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', borderRadius: '50%', padding: '2px 5px', fontSize: '10px' }}>{unreadCount}</span>;
+        })()}
       </div>
       <div
         className="profile-container"
@@ -417,6 +450,8 @@ export default function InvestorDashboard() {
         {activeView === 'notifications' && (
           <NotificationPanel
             alerts={alerts}
+            readAlerts={readAlerts}
+            setReadAlerts={setReadAlerts}
             onClose={() => setActiveView('dashboard')}
           />
         )}
@@ -459,7 +494,21 @@ export default function InvestorDashboard() {
               </div>
               <div className="terms-text">
                 <p>1. Data Privacy: Your portfolio data is encrypted.</p>
-                <p>2. Compliance: All reports follow SEBI standards.</p>
+                <p>2. Compliance: All reports follow SEBI or MiFID II standards.</p>
+                <div style={{ marginLeft: '30px' }}>
+                  <p><strong>SEBI (Securities and Exchange Board of India) Rules:</strong></p>
+                  <ul style={{ marginLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Risk Management: Derivative percentage cannot exceed Bond percentage</li>
+                    <li>Regulatory Cap: Derivatives cannot exceed 50% of total portfolio</li>
+                    <li>Liquidity Requirement: Bonds must constitute at least 10% of portfolio</li>
+                  </ul>
+                  <p><strong>MiFID II (Markets in Financial Instruments Directive) Rules:</strong></p>
+                  <ul style={{ marginLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Speculative Control: Derivatives cannot exceed Equity allocation</li>
+                    <li>Risk Asset Cap: Combined Equity and Derivatives must not exceed 80%</li>
+                    <li>Diversification Standard: Combined Bond and Equity must be at least 30%</li>
+                  </ul>
+                </div>
                 <p>3. Usage: System is for authorized investor use only.</p>
               </div>
             </div>
@@ -591,7 +640,7 @@ export default function InvestorDashboard() {
                     />
                   </div>
                 </div>
-                <div className="table-wrapper">
+                <div className="pad">
                   <table className="portfolio-table">
                     <thead>
                       <tr>
@@ -628,7 +677,7 @@ export default function InvestorDashboard() {
                               <tr className="expansion-row">
                                 <td colSpan="6">
                                   <div className="allocation-details">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                    <div className="allocation-header">
                                       <h4>Allocation Breakdown</h4>
                                       <button className="resend-btn" onClick={(e) => { e.stopPropagation(); handleResendClick(port); }}>
                                         🔄 Resend Request

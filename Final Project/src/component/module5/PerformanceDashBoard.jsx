@@ -229,8 +229,8 @@ function PerformanceDashboard() {
   const myLoginOptions = (
     <div className="home-links">
       <Link to="/investordashboard" className="ad">Home</Link>
-      <Link to="/P1" className="ad active">Performance Dashboard</Link>
-      <Link to="/P2" className="ad">Export Report</Link>
+      <Link to="/portfolio-performances" className="ad active">Performance Dashboard</Link>
+      <Link to="/export-reports" className="ad">Export Report</Link>
     </div>
   );
 
@@ -307,8 +307,8 @@ function PerformanceDashboard() {
   const myLoginOptionsWithReport = (
     <div className="home-links">
       <Link to="/investordashboard" className="ad">Home</Link>
-      <Link to="/P1" className="ad active">Performance Dashboard</Link>
-      <Link to="/P2" state={{ reportData: reportPayload }} className="ad">
+      <Link to="/portfolio-performances" className="ad active">Performance Dashboard</Link>
+      <Link to="/export-reports" state={{ reportData: reportPayload }} className="ad">
         Export Report
       </Link>
     </div>
@@ -467,7 +467,7 @@ function PerformanceDashboard() {
 
       <footer className="home-footer1">
         <img src={logo} alt="logo" className="hero-logo-footer" />
-        <h5>© 2026 PortSure – Portfolio Risk Analysis</h5>
+        <h5>© 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
       </footer>
     </div>
   );

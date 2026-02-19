@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Snackbar } from "@mui/material";
 import "../../CSSDesgin3/ExposureAlertScreen.css";
@@ -65,11 +65,11 @@ export default function ExposureAlertScreen() {
   const loggedInUser = JSON.parse(localStorage.getItem("compliance_user") || "{}");
   const token = loggedInUser.token;
 
-  const getAuthHeaders = () => ({
+  const getAuthHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization': `Bearer ${token}`
-  });
+  }), [token]);
 
   // 1) Load investors
   useEffect(() => {
@@ -82,8 +82,7 @@ export default function ExposureAlertScreen() {
         });
 
         if (!res.ok) {
-          const text = await res.text();
-          console.error("Investors fetch failed:", res.status, text);
+          await res.text();
           setInvestors([]);
           setSelectedInvestorId("");
           return;
@@ -99,14 +98,13 @@ export default function ExposureAlertScreen() {
           setSelectedInvestorId("");
         }
       } catch (err) {
-        console.error("Failed to load investors:", err);
         setInvestors([]);
         setSelectedInvestorId("");
       }
     };
 
     loadInvestors();
-  }, [token]);
+  }, [token, getAuthHeaders]);
 
   // 2) Load portfolios for selected investor
   useEffect(() => {
@@ -121,8 +119,7 @@ export default function ExposureAlertScreen() {
           headers: getAuthHeaders()
         });
         if (!res.ok) {
-          const text = await res.text();
-          console.error("Portfolios fetch failed:", res.status, text);
+          await res.text();
           setPortfolios({});
           setSelectedPortfolio("");
           return;
@@ -147,7 +144,6 @@ export default function ExposureAlertScreen() {
         const firstKey = Object.keys(map)[0];
         setSelectedPortfolio(firstKey || "");
       } catch (err) {
-        console.error("Failed to load portfolios:", err);
         setPortfolios({});
         setSelectedPortfolio("");
       } finally {
@@ -156,7 +152,7 @@ export default function ExposureAlertScreen() {
     };
 
     loadPortfolios();
-  }, [selectedInvestorId, token]);
+  }, [selectedInvestorId, token, getAuthHeaders]);
 
   // 3) Load alert history for selected portfolio
   useEffect(() => {
@@ -173,8 +169,7 @@ export default function ExposureAlertScreen() {
         });
 
         if (!res.ok) {
-          const text = await res.text();
-          console.error("Alert history fetch failed:", res.status, text);
+          await res.text();
           setAlertHistory([]);
           return;
         }
@@ -182,13 +177,12 @@ export default function ExposureAlertScreen() {
         const data = await res.json();
         setAlertHistory(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Error fetching alert history:", err);
         setAlertHistory([]);
       }
     };
 
     fetchHistory();
-  }, [selectedPortfolio, portfolios, alertSent, token]);
+  }, [selectedPortfolio, portfolios, alertSent, token, getAuthHeaders]);
 
   // reset warning display when switching portfolio
   useEffect(() => {
@@ -206,7 +200,7 @@ export default function ExposureAlertScreen() {
     const breachNames = activeBreaches.map((b) => b.name).join(", ");
     const firstBreach = activeBreaches[0];
 
-    // A) ExposureAlertService payload (investorId is required if your alert DB has NOT NULL investorId)
+    // ExposureAlertService payload
     const alertPayload = {
       investorId: Number(selectedInvestorId),
       assetType: breachNames,
@@ -215,21 +209,8 @@ export default function ExposureAlertScreen() {
       status: "CRITICAL_BREACH",
     };
 
-    // B) ComplianceReportService payload
-    const compliancePayload = {
-      portfolioId: dbId,
-      // If your compliance table/entity has investorId, keep this; otherwise remove it.
-      investorId: Number(selectedInvestorId),
-      regulationType: "Exposure Limit Policy",
-      findings: `Automatic Breach Log: ${breachNames} recorded at ${firstBreach.value.toFixed(
-        2
-      )}% (Limit: ${limits[firstBreach.name]}%)`,
-      date: new Date().toISOString().split("T")[0],
-      status: "BREACH",
-    };
-
     try {
-      // 1) Save exposure alert
+      // Save exposure alert
       const alertRes = await fetch(`http://localhost:8081/api/alerts/send/${dbId}`, {
         method: "POST",
         headers: getAuthHeaders(),
@@ -238,33 +219,14 @@ export default function ExposureAlertScreen() {
 
       if (!alertRes.ok) {
         const text = await alertRes.text();
-        console.error("Alert API failed:", alertRes.status, text);
         alert(text || "Failed to save exposure alert.");
         return;
       }
 
-      // 2) Save compliance log
-      const complianceRes = await fetch(`http://localhost:8081/api/compliance/logs/create`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(compliancePayload),
-      });
-
-      if (!complianceRes.ok) {
-        const text = await complianceRes.text();
-        console.error("Compliance API failed:", complianceRes.status, text);
-        alert(text || "Failed to save compliance log.");
-        return;
-      }
-
-      const savedLog = await complianceRes.json();
-      console.log("Compliance log saved:", savedLog);
-
       setAlertSent(true);
       setIsDismissed(true);
     } catch (err) {
-      console.error("Alert/Compliance logging failed:", err);
-      alert("Network error while sending alert/log.");
+      alert("Network error while sending alert.");
     }
   }
 
@@ -280,24 +242,22 @@ export default function ExposureAlertScreen() {
 
       if (!res.ok) {
         const text = await res.text();
-        console.error("Delete failed:", res.status, text);
         alert(text || "Delete failed");
         return;
       }
 
       setAlertHistory((prev) => prev.filter((a) => a.alertId !== alertId));
     } catch (err) {
-      console.error("Delete failed:", err);
       alert("Network error while deleting.");
     }
   };
 
   const navOptions = (
     <div className="home-links">
-      <Link to="/C1" className="ad">Home</Link>
-      <Link to="/C2" className="ad">Compliance Logs</Link>
-      <Link to="/r" className="ad">Risk Score</Link>
-      <Link to="/r1" className="ad active">Exposure Alert</Link>
+      <Link to="/compliance-officer" className="ad">Home</Link>
+      <Link to="/compliance-logs" className="ad">Logs</Link>
+      <Link to="/risk-score" className="ad">Risk Score</Link>
+      <Link to="/exposure-alerts" className="ad active">Alerts</Link>
     </div>
   );
 

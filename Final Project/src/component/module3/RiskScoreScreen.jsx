@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Navbar from "../../Navbar/Navbar";
 import "../../CSSDesgin3/RiskScoreScreen.css";
@@ -35,20 +35,18 @@ export default function RiskScoreScreen() {
   const loggedInUser = JSON.parse(localStorage.getItem("compliance_user") || "{}");
   const token = loggedInUser.token;
 
-  const navigate = useNavigate(); // Ensure you import useNavigate from 'react-router-dom'
-
-  const getAuthHeaders = () => ({
+  const getAuthHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization': `Bearer ${token}`
-  });
+  }), [token]);
 
   const navOptions = (
     <div className="home-links">
-      <Link to="/C1" className="ad">Home</Link>
-      <Link to="/C2" className="ad">Compliance Logs</Link>
-      <Link to="/r" className="ad active">Risk Score</Link>
-      <Link to="/r1" className="ad">Exposure Alert</Link>
+      <Link to="/compliance-officer" className="ad">Home</Link>
+      <Link to="/compliance-logs" className="ad">Logs</Link>
+      <Link to="/risk-score" className="ad active">Risk Score</Link>
+      <Link to="/exposure-alerts" className="ad">Alerts</Link>
     </div>
   );
 
@@ -71,10 +69,9 @@ export default function RiskScoreScreen() {
         setHistory([]);
       }
     } catch (error) {
-      console.error("Risk history fetch failed:", error);
       setHistory([]);
     }
-  }, [token]);
+  }, [token, getAuthHeaders]);
 
   // 1) Load investors
   useEffect(() => {
@@ -89,8 +86,7 @@ export default function RiskScoreScreen() {
         });
 
         if (!response.ok) {
-          const text = await response.text();
-          console.error("Investors fetch failed:", response.status, text);
+          await response.text();
           setInvestors([]);
           return;
         }
@@ -103,13 +99,12 @@ export default function RiskScoreScreen() {
           setSelectedInvestorId(String(data[0].investorId));
         }
       } catch (err) {
-        console.error("Error loading investors:", err);
         setInvestors([]);
       }
     };
 
     loadInvestors();
-  }, [token]);
+  }, [token, getAuthHeaders]);
 
   // 2) Load portfolios by selected investor
   useEffect(() => {
@@ -125,8 +120,7 @@ export default function RiskScoreScreen() {
         );
 
         if (!response.ok) {
-          const text = await response.text();
-          console.error("Portfolios fetch failed:", response.status, text);
+          await response.text();
           setPortfolios({});
           setSelectedPortfolioId("");
           setAllocation({ Equity: 0, Bond: 0, Derivative: 0 });
@@ -164,7 +158,6 @@ export default function RiskScoreScreen() {
           setHistory([]);
         }
       } catch (err) {
-        console.error("Error loading portfolios:", err);
         setPortfolios({});
         setSelectedPortfolioId("");
         setAllocation({ Equity: 0, Bond: 0, Derivative: 0 });
@@ -175,7 +168,7 @@ export default function RiskScoreScreen() {
     };
 
     loadPortfoliosByInvestor();
-  }, [selectedInvestorId, fetchRiskHistory, token]);
+  }, [selectedInvestorId, fetchRiskHistory, token, getAuthHeaders]);
 
   const handlePortfolioChange = (id) => {
     const key = String(id);
@@ -223,7 +216,6 @@ export default function RiskScoreScreen() {
 
       if (!response.ok) {
         const text = await response.text();
-        console.error("Risk save failed:", response.status, text);
         alert(text || "Failed to save risk score.");
         return;
       }
@@ -321,7 +313,7 @@ export default function RiskScoreScreen() {
           <section className="dashboard-section section-chart">
             <h2>Exposure Distribution</h2>
             <div style={{ width: "100%", height: "280px" }}>
-              <ResponsiveContainer>
+              <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={[

@@ -97,7 +97,7 @@ const Register = () => {
         await response.json();
         setSuccessMessage('Registration Successful! Redirecting to login...');
         setTimeout(() => {
-          navigate('/login-one');
+          navigate('/login');
         }, 2000);
       } else {
         const errorText = await response.text();
@@ -224,7 +224,7 @@ const Register = () => {
           
          <div className="login-inline">
             <span className="login-text">Already registered?</span>
-            <Link to="/login-one" className="login-small-btn">Login</Link>
+            <Link to="/login" className="login-small-btn">Login</Link>
           </div>
         </form>
       </div>

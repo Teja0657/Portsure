@@ -95,27 +95,39 @@
   font-weight: 700;
   color: var(--text-heading);
 }
+
 .search-box-container {
-  background-color: rgb(36, 43, 74);
-  color:white;
-  
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: var(--radius-md);
 }
+
 .table-search-input {
-  padding: 0.625rem 1rem;
+  padding: var(--space-md) var(--space-lg);
   width: 100%;
-  max-width: 300px;
-  border: 1px solid black;
+  max-width: 350px;
+  border: 2px solid #000000 !important;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
-  transition: var(--transition-fast);
-  background: black;
-  
+  font-weight: 600;
+  color: #000000 !important;
+  transition: var(--transition-base);
+  background: white !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.table-search-input::placeholder {
+  color: #64748b !important;
+  font-weight: 500;
 }
 
 .table-search-input:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-light);
-  background: var(--bg-card);
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  background: white !important;
 }
 
 .section{
@@ -125,35 +137,49 @@
 .history-list {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
 }
 
 .history-table thead th {
-  background: var(--bg-surface);
-  color: var(--text-muted);
+  background: var(--primary);
+  color: white;
   font-weight: 600;
   text-align: left;
-  padding: var(--space-md);
-  border-bottom: 2px solid #e2e8f0;
+  padding: var(--space-lg);
+  border: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.75rem;
 }
 
-.history-table tbody td {
-  padding: var(--space-md);
-  border-bottom: 1px solid #f1f5f9;
-  color: var(--text-main);
-  vertical-align: middle;
+.history-table tbody tr {
+  transition: background-color 0.2s ease;
 }
 
 .history-table tbody tr:hover {
-  background: #f8fafc;
+  background-color: #f8fafc;
+}
+
+.history-table tbody td {
+  padding: var(--space-lg);
+  border-bottom: 1px solid #e2e8f0;
+  color: var(--primary);
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* Status Pill */
@@ -252,12 +278,36 @@
   letter-spacing: 0.1em;
 }
 
-.profile-back-btn {
+.profile-header {
+  padding: var(--space-xl);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-header h3 {
+  color: white;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.close-view-btn {
   background: rgba(255, 255, 255, 0.1);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
-  backdrop-filter: blur(10px);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.close-view-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .profile-body {

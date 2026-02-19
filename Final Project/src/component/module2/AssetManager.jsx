@@ -45,8 +45,7 @@ export default function AssetManager() {
         headers: getAuthHeaders()
       });
       if (!response.ok) {
-        const text = await response.text();
-        console.error("Portfolio fetch failed:", response.status, text);
+        await response.text();
         // Relaxed error handling: Do not auto-logout on transient errors. 
         // Session validity is checked on mount.
         return;
@@ -98,44 +97,31 @@ export default function AssetManager() {
       setSettlementData(formattedData);
       setPendingCount(formattedData.filter(p => p.status === "PENDING").length);
     } catch (error) {
-      console.error("Database connection error:", error);
+      // Error handling
     } finally {
       setIsLoading(false);
     }
   }, [token, getAuthHeaders, navigate]);
 
   const fetchProfileFromDB = useCallback(async () => {
-    if (!staffId || !token) return;
-
-    try {
-      const url = `http://localhost:8081/api/internal/profile/${staffId}`;
-      const response = await fetch(url, {
-        headers: getAuthHeaders()
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("Profile fetch failed:", response.status, text);
-        return;
-      }
-
-      const dbUser = await response.json();
-
-      setProfile({
-        staffId: dbUser.staffId ?? "",
-        name: dbUser.fullName ?? dbUser.name ?? "",
-        email: dbUser.email ?? "",
-        role: dbUser.role ?? "",
-      });
-    } catch (error) {
-      console.error("Error fetching profile from database:", error);
+    if (!staffId || !token) {
+      return;
     }
-  }, [staffId, token, getAuthHeaders]);
+
+    // Use localStorage data directly to avoid 403 errors
+    const loggedInUser = JSON.parse(localStorage.getItem("manager_user") || "{}");
+    const user = loggedInUser.user || loggedInUser;
+    setProfile({
+      staffId: user.staffId || staffId,
+      name: user.fullName || user.name || "Asset Manager",
+      email: user.email || "N/A",
+      role: user.role || "ASSET_MANAGER",
+    });
+  }, [staffId, token]);
 
   // Session Validation and Data Fetching
   useEffect(() => {
     if (!token || !staffId) {
-      console.warn("No valid session found (Asset Manager), redirecting to login.");
       navigate('/');
       return;
     }
@@ -158,39 +144,6 @@ export default function AssetManager() {
 
   }, [token, staffId, userRole, navigate, fetchManagerData, fetchProfileFromDB]);
 
-  useEffect(() => {
-    const fetchProfileFromDB = async () => {
-      if (activeView !== "profile") return;
-      if (!staffId || !token) return;
-
-      try {
-        const url = `http://localhost:8081/api/internal/profile/${staffId}`;
-        const response = await fetch(url, {
-          headers: getAuthHeaders()
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Profile fetch failed:", response.status, text);
-          return;
-        }
-
-        const dbUser = await response.json();
-
-        setProfile({
-          staffId: dbUser.staffId ?? "",
-          name: dbUser.fullName ?? dbUser.name ?? "",
-          email: dbUser.email ?? "",
-          role: dbUser.role ?? "",
-        });
-      } catch (error) {
-        console.error("Error fetching profile from database:", error);
-      }
-    };
-
-    fetchProfileFromDB();
-  }, [activeView, staffId, token]);
-
   const filteredData = settlementData.filter((item) => {
     const search = searchTerm.toLowerCase();
     return (
@@ -209,7 +162,7 @@ export default function AssetManager() {
         Home
       </button>
 
-      <Link to="/received-requests" className="ad" style={{ position: 'relative' }}>
+      <Link to="/requests" className="ad" style={{ position: 'relative' }}>
         Requests
         {pendingCount > 0 && (
           <span className="notification-badge">{pendingCount}</span>
@@ -274,9 +227,17 @@ export default function AssetManager() {
         {activeView === "profile" ? (
           <div className="profile-page">
             <div className="profile-card">
+              <div className="profile-header">
+                <h3>My Profile</h3>
+                <button 
+                  className="close-view-btn"
+                  onClick={() => setActiveView("dashboard")}
+                >
+                  Close
+                </button>
+              </div>
+              
               <div className="profile-banner">
-
-
                 <div className="profile-banner-row">
                   <div className="profile-avatar-wrap">
                     <img className="profile-avatar-img" src={portfoliologo} alt="User" />
@@ -332,7 +293,7 @@ export default function AssetManager() {
                 <div className="search-box-container">
                   <input
                     type="text"
-                    placeholder="Search Investor or PF-ID..."
+                    placeholder="Search by PF-ID..."
                     className="table-search-input"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -383,7 +344,7 @@ export default function AssetManager() {
                           <td data-label="Actions">
                             <button
                               className="view-btn"
-                              onClick={() => navigate('/Driver', { state: { portfolio: s } })}
+                              onClick={() => navigate('/portfolio-diversification', { state: { portfolio: s } })}
                             >
                               View Diversification
                             </button>

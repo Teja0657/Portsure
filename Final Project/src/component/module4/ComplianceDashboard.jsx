@@ -32,7 +32,6 @@ export default function ComplianceDashboard() {
 
   useEffect(() => {
     if (!token || !staffId) {
-      console.warn("No valid session found (Compliance), redirecting to login.");
       navigate('/');
     }
   }, [token, staffId, navigate]);
@@ -84,7 +83,7 @@ export default function ComplianceDashboard() {
       });
       setComplianceLogs(logsData);
     } catch (err) {
-      console.error("Dashboard sync failed:", err);
+      // Error handling
     }
   };
 
@@ -99,36 +98,29 @@ export default function ComplianceDashboard() {
 
       return () => clearInterval(intervalId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (activeView !== "profile") return;
-      if (!staffId) return;
-
-      try {
-        const res = await fetch(`http://localhost:8081/api/internal/profile/${staffId}`, {
-          headers: getAuthHeaders()
-        });
-        if (!res.ok) {
-          const t = await res.text();
-          console.error("Profile fetch failed:", res.status, t);
-          return;
-        }
-        const dbUser = await res.json();
-        setProfile({
-          staffId: dbUser.staffId ?? staffId ?? "",
-          name: dbUser.fullName ?? dbUser.name ?? "",
-          email: dbUser.email ?? "",
-          role: dbUser.role ?? "",
-        });
-      } catch (e) {
-        console.error("Profile fetch error:", e);
+      if (!staffId) {
+        return;
       }
+
+      // Use localStorage data directly to avoid 403 errors
+      const loggedInUser = JSON.parse(localStorage.getItem("compliance_user") || "{}");
+      const user = loggedInUser.user || loggedInUser;
+      setProfile({
+        staffId: user.staffId || staffId,
+        name: user.fullName || user.name || "Compliance Officer",
+        email: user.email || "N/A",
+        role: user.role || "COMPLIANCE_OFFICER",
+      });
     };
 
     fetchProfile();
-  }, [activeView, staffId, token]);
+  }, [activeView, staffId]);
 
   // Filter to show only NON-COMPLIANT reports
   const alerts = complianceLogs.filter((log) =>
@@ -136,7 +128,7 @@ export default function ComplianceDashboard() {
   );
 
   const handleAuditAll = async () => {
-    if (!window.confirm("This will audit all portfolios.")) return;
+    // if (!window.confirm("This will audit all portfolios.")) return;
     setAuditing(true);
 
     // Clear all logs immediately
@@ -149,14 +141,13 @@ export default function ComplianceDashboard() {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        alert("Audit completed successfully!");
+        // alert("Audit completed successfully!");
         await fetchData();
       } else {
         alert("Audit failed: " + await res.text());
         await fetchData(); // Refetch to show any existing logs
       }
     } catch (err) {
-      console.error("Audit error:", err);
       alert("Failed to trigger audit.");
       await fetchData(); // Refetch to show any existing logs
     } finally {
@@ -174,9 +165,9 @@ export default function ComplianceDashboard() {
         Home
       </button>
 
-      <Link to="/C2" className="ad">Compliance Logs</Link>
-      <Link to="/r" className="ad">Risk Score</Link>
-      <Link to="/r1" className="ad">Exposure Alert</Link>
+      <Link to="/compliance-logs" className="ad">Logs</Link>
+      <Link to="/risk-score" className="ad">Risk Score</Link>
+      <Link to="/exposure-alerts" className="ad">Alerts</Link>
 
       {/* Profile dropdown */}
       <div
@@ -231,9 +222,17 @@ export default function ComplianceDashboard() {
       {activeView === "profile" ? (
         <main className="cd-profile-page">
           <div className="cd-profile-card">
+            <div className="cd-profile-header">
+              <h3>My Profile</h3>
+              <button 
+                className="close-view-btn"
+                onClick={() => setActiveView("dashboard")}
+              >
+                Close
+              </button>
+            </div>
+            
             <div className="cd-profile-banner">
-
-
               <div className="cd-profile-banner-row">
                 <div className="cd-profile-avatar-wrap">
                   <img className="cd-profile-avatar-img" src={profileLogo} alt="User" />

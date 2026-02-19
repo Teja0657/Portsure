@@ -102,17 +102,32 @@
     height: 64px;
   }
 
+  .home-nav {
+    gap: var(--space-sm);
+  }
+
+  .nav-brand {
+    gap: var(--space-sm);
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
   .home-h2 {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hero-logo1 {
     width: 28px;
     height: 28px;
+    flex-shrink: 0;
   }
 
   .home-links {
-    gap: 10px;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .home-links .ad {
@@ -127,20 +142,25 @@
     height: 56px;
   }
 
+  .home-nav {
+    gap: 4px;
+  }
+
   .nav-brand {
     gap: 4px;
     flex-shrink: 1;
     min-width: 0;
+    max-width: 60%;
   }
 
   .hero-logo1 {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
   }
 
   .home-h2 {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     letter-spacing: -0.01em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -148,27 +168,27 @@
   }
 
   .home-links {
-    gap: 2px;
-    flex-shrink: 1;
+    gap: 4px;
+    flex-shrink: 0;
     min-width: 0;
   }
 
   .home-links .ad {
-    padding: 0.25rem 0.4rem;
-    font-size: 0.65rem;
-    letter-spacing: -0.02em;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: -0.01em;
   }
 
   .profile-container,
   .cd-profile-container {
-    margin-left: 2px;
+    margin-left: 4px;
     flex-shrink: 0;
   }
 
   .profile-btn,
   .cd-profile-btn {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-width: 1px;
   }
 }
@@ -319,7 +339,8 @@
 }
 
 .hero-logo1:hover {
-  animation: logoRotate 0.6s ease-in-out;
+  /* Removed rotation animation - logo stays constant on hover */
+  transform: scale(1.05);
 }
 
 
@@ -333,7 +354,7 @@
 }
 
 .home-h2 {
-  animation: textGlow 2s ease-in-out infinite;
+  /* Removed blinking animation - text stays normal */
   transition: transform 0.3s ease;
 }
 

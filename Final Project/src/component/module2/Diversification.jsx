@@ -74,7 +74,7 @@ export default function PortfolioDiversification() {
   const myLoginOptions = (
     <div className="home-links">
       <Link to="/asset-manager" className="ad">Home</Link>
-      <Link to="/Driver" className="ad active">Diversification</Link>
+      <Link to="/portfolio-diversification" className="ad active">Diversification</Link>
     </div>
   );
 

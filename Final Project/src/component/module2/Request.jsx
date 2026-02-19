@@ -102,7 +102,7 @@ export default function Request() {
   };
 
   const handleGoToAllocation = (req) => {
-    navigate('/investor-login', {
+    navigate('/asset-allocation', {
       state: {
         portfolioId: req.portfolioId,
         portfolioName: req.portfolioName,
@@ -132,7 +132,7 @@ export default function Request() {
   const myLoginOptions = (
     <div className="home-links">
       <Link to="/asset-manager" className="ad">Home</Link>
-      <Link to="/received-requests" className="ad active">Received Requests</Link>
+      <Link to="/requests" className="ad active">Received Requests</Link>
     </div>
   );
 

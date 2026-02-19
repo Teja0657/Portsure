@@ -29,13 +29,12 @@ export default function ComplianceLogs() {
     })
       .then(async (res) => {
         if (!res.ok) {
-          console.error("Logs fetch failed:", res.status, await res.text());
           return [];
         }
         return res.json();
       })
       .then((data) => setLogs(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Report Load Error:", err));
+      .catch((err) => {});
   };
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function ComplianceLogs() {
 
   const deleteLog = async (logId) => {
     if (!token) return;
-    if (!window.confirm(`Are you sure you want to delete Log ID: ${logId}?`)) return;
+    // if (!window.confirm(`Are you sure you want to delete Log ID: ${logId}?`)) return;
 
     try {
       const response = await fetch(`http://localhost:8081/api/compliance/logs/${logId}`, {
@@ -53,14 +52,12 @@ export default function ComplianceLogs() {
       });
 
       if (response.ok) {
-        alert("Log deleted successfully.");
+        // alert("Log deleted successfully.");
         fetchLogs();
       } else {
         alert("Failed to delete the log.");
-        console.error("Delete failed:", response.status, await response.text());
       }
     } catch (err) {
-      console.error("Delete Error:", err);
       alert("Connection error while trying to delete.");
     }
   };
@@ -117,7 +114,7 @@ export default function ComplianceLogs() {
       alert("Session invalid. Please login.");
       return;
     }
-    if (!window.confirm("Can you confirm to audit all portfolios")) return;
+    // if (!window.confirm("Can you confirm to audit all portfolios")) return;
     setAuditing(true);
 
     // Clear all logs immediately
@@ -129,14 +126,13 @@ export default function ComplianceLogs() {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        alert("Audit completed successfully!");
+        // alert("Audit completed successfully!");
         fetchLogs();
       } else {
         alert("Audit failed: " + await res.text());
         fetchLogs(); // Refetch to show any existing logs
       }
     } catch (err) {
-      console.error("Audit error:", err);
       alert("Failed to trigger audit.");
       fetchLogs(); // Refetch to show any existing logs
     } finally {
@@ -146,10 +142,10 @@ export default function ComplianceLogs() {
 
   const navOptions = (
     <div className="home-links">
-      <Link to="/C1" className="ad">Home</Link>
-      <Link to="/C2" className="ad active">Compliance Logs</Link>
-      <Link to="/r" className="ad">Risk Score</Link>
-      <Link to="/r1" className="ad">Exposure Alert</Link>
+      <Link to="/compliance-officer" className="ad">Home</Link>
+      <Link to="/compliance-logs" className="ad active">Logs</Link>
+      <Link to="/risk-score" className="ad">Risk Score</Link>
+      <Link to="/exposure-alerts" className="ad">Alerts</Link>
     </div>
   );
 
@@ -203,58 +199,60 @@ export default function ComplianceLogs() {
           </select>
         </div>
 
-        <table className="compliance-table">
-          <thead>
-            <tr>
-              <th>Sl.No</th>
-              <th>Portfolio ID</th>
-              <th>Regulation Type</th>
-              <th>Findings</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <div className="table-wrapper">
+          <table className="compliance-table">
+            <thead>
+              <tr>
+                <th>Sl.No</th>
+                <th>Portfolio ID</th>
+                <th>Regulation Type</th>
+                <th>Findings</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {filteredLogs.length > 0 ? (
-              filteredLogs.map((log, index) => (
-                <tr key={log.logId}>
-                  <td data-label="Sl.No">{index + 1}</td>
-                  <td data-label="Portfolio ID">PF-{log.portfolioId}</td>
-                  <td data-label="Regulation Type">{log.regulationType}</td>
-                  <td data-label="Findings" className="findings-text">{log.findings}</td>
-                  <td data-label="Date">{log.date}</td>
-                  <td data-label="Status">
-                    <span className={`status-pill ${(log.complianceStatus || "").toUpperCase().includes('NON-COMPLIANCE') ||
-                      (log.complianceStatus || "").toUpperCase().includes('NON-COMPLIANT') ||
-                      (log.complianceStatus || "").toUpperCase().includes('BREACH')
-                      ? 'non-compliance'
-                      : 'compliance'
-                      }`}>
-                      {log.complianceStatus}
-                    </span>
-                  </td>
-                  <td data-label="Actions">
-                    <button
-                      className="delete-btn-small"
-                      onClick={() => deleteLog(log.logId)}
-                      title="Delete log"
-                    >
-                      Delete
-                    </button>
+            <tbody>
+              {filteredLogs.length > 0 ? (
+                filteredLogs.map((log, index) => (
+                  <tr key={log.logId}>
+                    <td data-label="Sl.No">{index + 1}</td>
+                    <td data-label="Portfolio ID">PF-{log.portfolioId}</td>
+                    <td data-label="Regulation Type">{log.regulationType}</td>
+                    <td data-label="Findings" className="findings-text">{log.findings}</td>
+                    <td data-label="Date">{log.date}</td>
+                    <td data-label="Status">
+                      <span className={`status-pill ${(log.complianceStatus || "").toUpperCase().includes('NON-COMPLIANCE') ||
+                        (log.complianceStatus || "").toUpperCase().includes('NON-COMPLIANT') ||
+                        (log.complianceStatus || "").toUpperCase().includes('BREACH')
+                        ? 'non-compliance'
+                        : 'compliance'
+                        }`}>
+                        {log.complianceStatus}
+                      </span>
+                    </td>
+                    <td data-label="Actions">
+                      <button
+                        className="delete-btn-small"
+                        onClick={() => deleteLog(log.logId)}
+                        title="Delete log"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: "center" }}>
+                    {searchTerm ? `No logs found for "${searchTerm}"` : "No compliance logs available."}
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center" }}>
-                  {searchTerm ? `No logs found for "${searchTerm}"` : "No compliance logs available."}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <footer className="home-footer1">

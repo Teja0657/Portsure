@@ -54,7 +54,7 @@ function ExportReport() {
 
   const myLoginOptions = (
     <div className='home-links'>
-      <Link to='/investordashboard' className='ad'>Home</Link>
+      <Link to='/investor' className='ad'>Home</Link>
       <Link to='/P1' className='ad'>Performance Dashboard</Link>
       <Link to='/P2' className='ad active'>Export Report</Link>
     </div>
@@ -73,7 +73,7 @@ function ExportReport() {
             <h2>No Portfolios Available</h2>
             <p>You haven't created any portfolios yet. Please create portfolios to generate reports.</p>
             <div className="report-empty-link-container">
-              <Link to='/investordashboard' className="report-empty-link">
+              <Link to='/investor' className="report-empty-link">
                 Go to Dashboard
               </Link>
             </div>
@@ -361,7 +361,7 @@ function ExportReport() {
 
       <footer className='home-footer1'>
         <img src={logo} alt='logo' className='hero-logo-footer' />
-        <h5> 2026 PortSure – Portfolio Risk Analysis</h5>
+        <h5> 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
       </footer>
     </div>
   );

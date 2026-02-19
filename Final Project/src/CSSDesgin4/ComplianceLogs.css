@@ -158,16 +158,27 @@
 }
  
 /* Compliance Table */
-.compliance-table {
-    
-    border-collapse: collapse;
+.table-wrapper {
     background: var(--bg-card);
     border-radius: var(--radius-xl);
+    padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
     border: 1px solid #e2e8f0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: 30px;
+    margin-right: 20px;
+    min-height: 500px;
+}
+
+.compliance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    margin-left:40px;
-    margin-right:20px
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    min-width: 800px;
 }
  
 .report-content {
@@ -175,11 +186,6 @@
     margin: 0 auto;
     width: 100%;
     padding: var(--space-xl) var(--space-md);
-    overflow-x: auto;
-}
- 
-.report-content table {
-    min-width: 800px;
 }
  
 .compliance-table th {
@@ -190,6 +196,7 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    border: none;
 }
  
 .compliance-table th:nth-child(1) { width: 60px; }      /* Sl.No */
@@ -200,11 +207,24 @@
 .compliance-table th:nth-child(6) { width: 130px; }    /* Status */
 .compliance-table th:nth-child(7) { width: 100px; }    /* Actions */
  
+.compliance-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.compliance-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
 .compliance-table td {
     padding: var(--space-lg);
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
     color: var(--primary);
     font-weight: 600;
+    vertical-align: middle;
+}
+
+.compliance-table tbody tr:last-child td {
+    border-bottom: none;
 }
  
 .compliance-table td:nth-child(5) {
@@ -212,16 +232,17 @@
 }
  
 .findings-text {
-    max-width: 350px;
+    max-width: 500px;
     font-size: 0.875rem;
     color: var(--text-muted);
     font-weight: 500;
     white-space: normal;
     word-wrap: break-word;
+    line-height: 1.5;
 }
  
 .status-pill {
-    padding: 4px 12px;
+        
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 800;
@@ -233,11 +254,17 @@
 .status-pill.non-compliance {
     background: #fee2e2;
     color: #991b1b;
+    min-width: 150px;
+    text-align: center;
 }
  
 .status-pill.compliance {
     background: #dcfce7;
     color: #166534;
+    min-width: 150px;
+    text-align: center;
+
+
 }
  
 .status-pill.breach {
@@ -253,6 +280,7 @@
 .status-pill.warning {
     background: #fef3c7;
     color: #854d0e;
+
 }
  
 .delete-btn-small {
@@ -277,20 +305,49 @@
  
 /* Mobile Responsive */
 @media (max-width: 900px) {
+    .report-content {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: var(--space-md);
+    }
+
     .report-header {
         flex-direction: column;
         gap: var(--space-lg);
         text-align: center;
+        margin-left: 10px;
+        margin-right: 10px;
     }
  
     .export-actions {
         flex-wrap: wrap;
         justify-content: center;
     }
+
+    .search-container {
+        margin-left: 10px;
+        margin-right: 10px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input {
+        width: auto;
+        min-width: auto;
+        flex: none;
+    }
+
+    .regulation-filter {
+        width: auto;
+        min-width: auto;
+        flex: none;
+    }
  
-    .report-content {
+    .table-wrapper {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        margin-left: 10px;
+        margin-right: 10px;
+        min-height: 400px;
     }
  
     .compliance-table {

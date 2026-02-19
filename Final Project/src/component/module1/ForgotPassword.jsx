@@ -151,7 +151,7 @@ function ForgotPassword() {
                         </button>
 
                         <div className="auth-footer">
-                            <Link to="/login-one" className="link-secondary">
+                            <Link to="/login" className="link-secondary">
                                 Back to Login
                             </Link>
                         </div>
@@ -202,7 +202,7 @@ function ForgotPassword() {
                         </button>
 
                         <div className="auth-footer">
-                            <Link to="/login-one" className="link-secondary">
+                            <Link to="/login" className="link-secondary">
                                 Back to Login
                             </Link>
                         </div>

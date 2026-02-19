@@ -86,6 +86,9 @@ public class ComplianceService {
                         } else if ((equity + derivative) > 80) {
                             status = "NON-COMPLIANCE";
                             findings = "MiFID WARNING: High Risk Allocation (>80% Risk Assets).";
+                        } else if(bond + equity < 30){
+                            status = "NON-COMPLIANCE";
+                            findings = "MiFID WARNING: Insufficient Diversification (Bond + Equity < 30%).";
                         }
                     }
 

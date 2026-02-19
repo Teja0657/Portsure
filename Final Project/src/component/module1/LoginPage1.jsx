@@ -11,9 +11,9 @@ const LoginPage1 = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const routes = {
-    Investor: '/investordashboard',
+    Investor: '/investor',
     'Asset Manager': '/asset-manager',
-    'Compliance Officer': '/C1',
+    'Compliance Officer': '/compliance-officer',
   };
 
   const handleLogin = async (e) => {
@@ -157,7 +157,7 @@ const LoginPage1 = () => {
 
         {role === 'Investor' && (
           <p className="reg-link">
-            Don&apos;t have an account? <Link to="/regis">Register</Link>
+            Don&apos;t have an account? <Link to="/register">Register</Link>
           </p>
         )}
       </div>

@@ -29,7 +29,7 @@ export default function PortSureHome() {
   const myLoginOptions = (
     <div className="home-links">
       <Link to="/asset-manager" className="ad active">Asset Allocation</Link>
-      <Link to="/received-requests" className="ad">Back</Link>
+      <Link to="/requests" className="ad">Back</Link>
 
     </div>
   );
