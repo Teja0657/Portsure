@@ -5,7 +5,7 @@ import Home from './component/HomePage'
 import Di from './component/module2/Diversification'
 import LoginPage from './component/module1/LoginPage1';
 import Asset from './component/module2/AssetManager';
-import Invest from './component/module1/InvestorDashboard';
+import Invest from './component/module5/InvestorDashboard';
 import Regis from './component/module1/Register';
 import InternalRegis from './component/module1/InternalRegister';
 import Riskscore from './component/module3/RiskScoreScreen';

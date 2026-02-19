@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../Navbar/Navbar';
-import "../../CSSDesgin1/InvestorDashboard.css";
+import "../../CSSDesgin5/InvestorDashboard.css";
 import logo from "../../logo/logo.png";
 import Profilelogo from "../../logo/profilelogo.jpg";
 import NotificationPanel from '../module2/TradeCature';
