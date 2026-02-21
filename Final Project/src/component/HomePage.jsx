@@ -4,6 +4,7 @@ import Navbar from "../Navbar/Navbar";
 import logo1 from "../logo/logo1.png";
 import logo from "../logo/logo.png";
 import '../CSSDesgin2/HomePage.css' 
+import Footer from './Footer';
 
 export default function HomePage() {
   
@@ -39,11 +40,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
-         <footer className="home-footer1">
-              <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />
-              <h5>@2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-            </footer>
+      <Footer />
     </div>
   );
 }

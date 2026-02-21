@@ -16,6 +16,7 @@ public class RouterValidator {
                         "/api/investors/register",
                         "/api/investors/login",
                         "/api/investors/check-email",
+                        "/api/investors/reset-password",
                         "/eureka");
 
         public Predicate<ServerHttpRequest> isSecured = request -> openApiEndpoints

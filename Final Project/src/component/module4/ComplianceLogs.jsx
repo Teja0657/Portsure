@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logo from "../../logo/logo.png";
+import Footer from "../Footer";
 
 export default function ComplianceLogs() {
   const [logs, setLogs] = useState([]);
@@ -22,19 +23,24 @@ export default function ComplianceLogs() {
     'Authorization': `Bearer ${token}`
   });
 
-  const fetchLogs = () => {
+  const fetchLogs = async () => {
     if (!token) return;
-    fetch("http://localhost:8081/api/compliance/logs", {
-      headers: getAuthHeaders()
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          return [];
-        }
-        return res.json();
-      })
-      .then((data) => setLogs(Array.isArray(data) ? data : []))
-      .catch((err) => {});
+    
+    try {
+      const res = await fetch("http://localhost:8081/api/compliance/logs", {
+        headers: getAuthHeaders()
+      });
+      
+      if (!res.ok) {
+        setLogs([]);
+        return;
+      }
+      
+      const data = await res.json();
+      setLogs(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setLogs([]);
+    }
   };
 
   useEffect(() => {
@@ -255,10 +261,7 @@ export default function ComplianceLogs() {
         </div>
       </div>
 
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />
-        <h5>© 2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import "../../CSSDesgin5/InvestorDashboard.css";
 import logo from "../../logo/logo.png";
 import Profilelogo from "../../logo/profilelogo.jpg";
 import NotificationPanel from '../module2/TradeCature';
+import Footer from '../Footer';
 export default function InvestorDashboard() {
   const navigate = useNavigate();
   const loggedInUser = JSON.parse(localStorage.getItem('investor_user') || '{}');
@@ -732,10 +733,7 @@ export default function InvestorDashboard() {
           </>
         )}
       </main>
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure Admin" className="hero-logo-footer" />
-        <h5>@2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

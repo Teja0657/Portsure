@@ -6,6 +6,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Navbar from '../../Navbar/Navbar';
 import "../../CSSDesgin2/Diversification.css";
 import logo from "../../logo/logo.png";
+import Footer from '../Footer';
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -142,10 +143,7 @@ export default function PortfolioDiversification() {
           </section>
         </main>
       </div>
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure Admin" className="hero-logo-footer" />
-        <h5>@2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
       </div>
     
   );

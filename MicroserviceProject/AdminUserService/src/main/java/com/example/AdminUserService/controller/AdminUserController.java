@@ -72,6 +72,7 @@ public class AdminUserController {
         newUser.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Secure hashing
         newUser.setFullName(userDTO.getFullName());
         newUser.setRole(userDTO.getRole());
+        
 
         adminUserRepositiory.save(newUser);
 

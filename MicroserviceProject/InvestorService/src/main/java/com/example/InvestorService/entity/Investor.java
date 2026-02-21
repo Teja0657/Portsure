@@ -21,8 +21,6 @@ public class Investor {
     @Column(unique = true)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "investor")
-
     public Long getInvestorId() {
         return investorId;
     }

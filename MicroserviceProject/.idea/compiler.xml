@@ -2,31 +2,40 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="EurekaServer" />
+        <module name="APIGateway" />
       </profile>
-      <profile name="Annotation profile for PortfolioService" enabled="true">
+      <profile name="Annotation profile for RiskScoreService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
+        <module name="ExposureAlertService" />
+        <module name="RiskScoreService" />
+        <module name="ComplianceReportService" />
+        <module name="AdminUserService" />
         <module name="PortfolioService" />
         <module name="InvestorService" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EurekaServer" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="APIGateway" options="-parameters" />
+      <module name="AdminUserService" options="-parameters" />
+      <module name="ComplianceReportService" options="-parameters" />
       <module name="EurekaServer" options="-parameters" />
+      <module name="ExposureAlertService" options="-parameters" />
       <module name="InvestorService" options="-parameters" />
       <module name="PortfolioService" options="-parameters" />
+      <module name="RiskScoreService" options="-parameters" />
     </option>
   </component>
 </project>

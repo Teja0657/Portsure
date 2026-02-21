@@ -7,15 +7,15 @@
         <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
         <option value="$PROJECT_DIR$/InvestorService/pom.xml" />
         <option value="$PROJECT_DIR$/PortfolioService/pom.xml" />
+        <option value="$PROJECT_DIR$/AdminUserService/pom.xml" />
+        <option value="$PROJECT_DIR$/ComplianceReportService/pom.xml" />
+        <option value="$PROJECT_DIR$/ExposureAlertService/pom.xml" />
+        <option value="$PROJECT_DIR$/RiskScoreService/pom.xml" />
+        <option value="$PROJECT_DIR$/APIGateway/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
-      </set>
-    </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="24" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

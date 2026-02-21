@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import Navbar from '../../Navbar/Navbar';
 import logo from '../../logo/logo.png';
 import '../../CSSDesgin5/ReportExport.css';
+import Footer from '../Footer';
 
 function ExportReport() {
   const location = useLocation();
@@ -359,10 +360,7 @@ function ExportReport() {
         </div>
       </div>
 
-      <footer className='home-footer1'>
-        <img src={logo} alt='logo' className='hero-logo-footer' />
-        <h5> 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

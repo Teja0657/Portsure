@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recha
 import Navbar from "../../Navbar/Navbar";
 import "../../CSSDesgin3/RiskScoreScreen.css";
 import logo from "../../logo/logo.png";
+import Footer from "../Footer";
 
 const COLORS = ["#2563eb", "#22c55e", "#f59e0b"];
 
@@ -376,10 +377,7 @@ export default function RiskScoreScreen() {
         </section>
       </main>
 
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />
-        <h5>© 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer/>
     </div>
   );
 }

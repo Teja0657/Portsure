@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../Navbar/Navbar";
 import logo from "../../logo/logo.png";
+import Footer from "../Footer";
 import {
   AreaChart,
   Area,
@@ -465,10 +466,7 @@ function PerformanceDashboard() {
         </main>
       </div>
 
-      <footer className="home-footer1">
-        <img src={logo} alt="logo" className="hero-logo-footer" />
-        <h5>© 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

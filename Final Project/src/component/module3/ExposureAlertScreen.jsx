@@ -4,6 +4,7 @@ import { Snackbar } from "@mui/material";
 import "../../CSSDesgin3/ExposureAlertScreen.css";
 import Navbar from "../../Navbar/Navbar";
 import logo from "../../logo/logo.png";
+import Footer from "../Footer";
 
 function getExposureData(allocation) {
   const equity = allocation?.Equity || 0;
@@ -418,10 +419,7 @@ export default function ExposureAlertScreen() {
         message="Compliance Alert & Audit Logged Successfully"
       /> */}
 
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />
-        <h5>© 2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

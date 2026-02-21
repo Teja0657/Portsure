@@ -7,7 +7,7 @@ import LoginPage from './component/module1/LoginPage1';
 import Asset from './component/module2/AssetManager';
 import Invest from './component/module5/InvestorDashboard';
 import Regis from './component/module1/Register';
-import InternalRegis from './component/module1/InternalRegister';
+
 import Riskscore from './component/module3/RiskScoreScreen';
 import Riskscore1 from './component/module3/ExposureAlertScreen';
 import CompDash from './component/module4/ComplianceDashboard';
@@ -28,7 +28,6 @@ function App() {
             <Route path="/asset-manager" element={<Asset />} />
             <Route path="/investor" element={<Invest />} />
             <Route path="/register" element={<Regis />}></Route>
-            <Route path="/internal-registers" element={<InternalRegis />}></Route>
             <Route exact path="/asset-allocation" element={<Navbar />}></Route>
 
             <Route exact path="/portfolio-diversification" element={<Di />}></Route>

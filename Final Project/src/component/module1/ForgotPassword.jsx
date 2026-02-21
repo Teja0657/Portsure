@@ -8,11 +8,13 @@ function ForgotPassword() {
     const [email, setEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [emailVerified, setEmailVerified] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [showPasswordHints, setShowPasswordHints] = useState(false);
     const navigate = useNavigate();
 
     // Verify email exists
@@ -20,22 +22,22 @@ function ForgotPassword() {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
+        setErrors({});
         
+        // Email validation - must have @ and .
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email.trim()) {
-            setErrorMessage('Please enter your email address.');
+            setErrors({ email: 'Email is required.' });
             return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setErrorMessage('Please enter a valid email address.');
+        } else if (!emailPattern.test(email)) {
+            setErrors({ email: 'Email must contain @ and . (e.g., user@example.com)' });
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const response = await fetch(`http://localhost:8081/api/investors/check-email?email=${encodeURIComponent(email)}`);
+            const response = await fetch(`http://localhost:8081/api/investors/check-email?email=${email}`);
             
             if (response.ok) {
                 setSuccessMessage('Email verified! Please enter your new password.');
@@ -55,19 +57,36 @@ function ForgotPassword() {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
+        setErrors({});
         
-        if (!newPassword || !confirmPassword) {
-            setErrorMessage('Please fill in all password fields.');
-            return;
+        const newErrors = {};
+
+        // Password validation - 6 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char
+        if (!newPassword.trim()) {
+            newErrors.newPassword = 'Password is required.';
+        } else {
+            if (newPassword.length < 6) {
+                newErrors.newPassword = 'Password must be at least 6 characters.';
+            } else if (!/[A-Z]/.test(newPassword)) {
+                newErrors.newPassword = 'Password must contain at least 1 uppercase letter.';
+            } else if (!/[a-z]/.test(newPassword)) {
+                newErrors.newPassword = 'Password must contain at least 1 lowercase letter.';
+            } else if (!/[0-9]/.test(newPassword)) {
+                newErrors.newPassword = 'Password must contain at least 1 digit.';
+            } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+                newErrors.newPassword = 'Password must contain at least 1 special character.';
+            }
         }
 
-        if (newPassword.length < 6) {
-            setErrorMessage('Password must be at least 6 characters long.');
-            return;
+        // Confirm password validation
+        if (!confirmPassword.trim()) {
+            newErrors.confirmPassword = 'Please confirm your password.';
+        } else if (newPassword !== confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match.';
         }
 
-        if (newPassword !== confirmPassword) {
-            setErrorMessage('New password and confirm password do not match.');
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
@@ -88,7 +107,7 @@ function ForgotPassword() {
             if (response.ok) {
                 setSuccessMessage('Password reset successfully! Redirecting to login...');
                 setTimeout(() => {
-                    navigate('/');
+                    navigate('/login');
                 }, 2000);
             } else {
                 const errorMsg = await response.text();
@@ -140,6 +159,7 @@ function ForgotPassword() {
                                 disabled={isLoading}
                                 required
                             />
+                            {errors.email && <span className="error-msg" style={{ color: 'red', fontSize: '0.85rem', display: 'block', marginTop: '0.25rem' }}>{errors.email}</span>}
                         </div>
 
                         <button 
@@ -167,17 +187,32 @@ function ForgotPassword() {
                                     placeholder="Enter new password (min. 6 characters)"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
+                                    onFocus={() => setShowPasswordHints(true)}
+                                    onBlur={() => setShowPasswordHints(false)}
                                     disabled={isLoading}
                                     required
                                 />
-                                <button
-                                    type="button"
-                                    className="toggle-password"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                                </button>
                             </div>
+                            {errors.newPassword && <span className="error-msg" style={{ color: 'red', fontSize: '0.85rem', display: 'block', marginTop: '0.25rem' }}>{errors.newPassword}</span>}
+                            {showPasswordHints && !errors.newPassword && (
+                                <div className="password-hints" style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                                    <small style={{ color: newPassword.length >= 6 ? 'green' : '#666', display: 'block', marginBottom: '0.25rem' }}>
+                                        ✓ At least 6 characters
+                                    </small>
+                                    <small style={{ color: /[A-Z]/.test(newPassword) ? 'green' : '#666', display: 'block', marginBottom: '0.25rem' }}>
+                                        ✓ 1 Uppercase letter
+                                    </small>
+                                    <small style={{ color: /[a-z]/.test(newPassword) ? 'green' : '#666', display: 'block', marginBottom: '0.25rem' }}>
+                                        ✓ 1 Lowercase letter
+                                    </small>
+                                    <small style={{ color: /[0-9]/.test(newPassword) ? 'green' : '#666', display: 'block', marginBottom: '0.25rem' }}>
+                                        ✓ 1 Digit
+                                    </small>
+                                    <small style={{ color: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword) ? 'green' : '#666', display: 'block' }}>
+                                        ✓ 1 Special character (!@#$%^&*)
+                                    </small>
+                                </div>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -191,6 +226,7 @@ function ForgotPassword() {
                                 disabled={isLoading}
                                 required
                             />
+                            {errors.confirmPassword && <span className="error-msg" style={{ color: 'red', fontSize: '0.85rem', display: 'block', marginTop: '0.25rem' }}>{errors.confirmPassword}</span>}
                         </div>
 
                         <button 

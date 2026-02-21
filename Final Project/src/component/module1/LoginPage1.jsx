@@ -17,11 +17,18 @@ const LoginPage1 = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault();//make the form submit without refreshing the page
+
+    const errorMessage = document.getElementById('error-message');// Get the error message element
+
     if (!email.trim() || !password.trim()) {
-      alert('Please enter email and password.');
+      // Show the message on screen
+      errorMessage.textContent = 'Please enter credentials.';
       return;
     }
+
+    // Clear the message if validation passes
+    errorMessage.textContent = '';
 
     setIsLoading(true);
 
@@ -44,7 +51,7 @@ const LoginPage1 = () => {
       if (response.ok) {
         const userData = await response.json();
 
-        console.log("Login Successful:", userData);
+        // console.log("Login Successful:", userData);
 
         // Session Isolation: Use specific keys based on role
         let storageKey = 'user'; // Fallback
@@ -103,6 +110,8 @@ const LoginPage1 = () => {
             </button>
           ))}
         </div>
+        
+        <p id="error-message" style={{ color: 'red', textAlign: 'center' }}></p>
 
         <form onSubmit={handleLogin} className="login-form" noValidate>
           <div className="input-field">

@@ -5,6 +5,7 @@ import "../../CSSDesgin4/ComplianceDashboard.css";
 import Navbar from "../../Navbar/Navbar.jsx";
 import logo from "../../logo/logo.png";
 import profileLogo from "../../logo/profilelogo.jpg";
+import Footer from "../Footer.jsx";
 
 function SummaryCard({ title, value, variant = "default", icon: Icon }) {
   return (
@@ -295,22 +296,6 @@ export default function ComplianceDashboard() {
                 className="run-audit-btn"
                 onClick={handleAuditAll}
                 disabled={auditing}
-                style={{
-                  background: "var(--primary)",
-                  color: "white",
-                  padding: "0.625rem 1.25rem",
-                  borderRadius: "var(--radius-md)",
-                  fontWeight: 700,
-                  fontSize: "0.875rem",
-                  border: "none",
-                  cursor: auditing ? "not-allowed" : "pointer",
-                  opacity: auditing ? 0.6 : 1,
-                  transition: "var(--transition-base)",
-                  boxShadow: "var(--shadow-sm)",
-                  marginRight: "50px"
-                }}
-                onMouseEnter={(e) => !auditing && (e.target.style.transform = "translateY(-2px)")}
-                onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
               >
                 {auditing ? "Auditing..." : "Run Audit"}
               </button>
@@ -347,10 +332,7 @@ export default function ComplianceDashboard() {
         </>
       )}
 
-      <footer className="home-footer1">
-        <img src={logo} alt="PortSure footer logo" className="hero-logo-footer" />
-        <h5>© 2025 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer/>
     </div>
   );
 }

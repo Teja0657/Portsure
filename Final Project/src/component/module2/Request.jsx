@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../Navbar/Navbar';
 import logo from '../../logo/logo.png';
 import '../../CSSDesgin2/AssetManager.css';
+import Footer from '../Footer';
 
 
 export default function Request() {
@@ -208,10 +209,7 @@ export default function Request() {
           </div>
         </div>
       </main>
-      <footer className="home-footer1">
-        <img src={logo} alt="logo" className="hero-logo-footer" />
-        <h5>© 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

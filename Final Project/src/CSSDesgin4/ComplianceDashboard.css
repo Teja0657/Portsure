@@ -119,6 +119,29 @@
   margin-left:50px;
   
 }
+
+.run-audit-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  margin-right: 50px;
+}
+
+.run-audit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.run-audit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
  
 .alerts-table {
   width: 100%;

@@ -78,7 +78,7 @@ public class ComplianceService {
                             status = "NON-COMPLIANCE";
                             findings = "SEBI VIOLATION: Liquidity Issue. Bonds must be at least 10%.";
                         }
-                    } else if ("MiFID II".equalsIgnoreCase(regulationType)) {
+                    } else if ("MiFID_II".equalsIgnoreCase(regulationType)) {
                         // --- MiFID II RULES ---
                         if (derivative > equity) {
                             status = "NON-COMPLIANCE";

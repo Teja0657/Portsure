@@ -4,6 +4,7 @@ import '../../CSSDesgin2/AssetManager.css';
 import Navbar from '../../Navbar/Navbar';
 import logo from '../../logo/logo.png';
 import portfoliologo from '../../logo/profilelogo.jpg';
+import Footer from '../Footer';
 
 export default function AssetManager() {
   const [settlementData, setSettlementData] = useState([]);
@@ -361,11 +362,7 @@ export default function AssetManager() {
           </>
         )}
       </main>
-
-      <footer className="home-footer1">
-        <img src={logo} alt="logo" className="hero-logo-footer" />
-        <h5>© 2026 PortSure – Portfolio Risk Analysis & Investment Compliance System</h5>
-      </footer>
+      <Footer />
     </div>
   );
 }

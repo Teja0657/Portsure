@@ -3,9 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import '../../CSSDesgin1/Register.css';
 import logo1 from "../../logo/logo.png";
 
-const MAX_KYC_SIZE_MB = 5;
-const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
-
 const Register = () => {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
@@ -20,7 +17,7 @@ const Register = () => {
 
   const validate = () => {
     const newErrors = {};
-    
+
     // Full Name validation - only alphabets and spaces
     const namePattern = /^[A-Za-z\s]+$/;
     if (!fullName.trim()) {
@@ -28,7 +25,7 @@ const Register = () => {
     } else if (!namePattern.test(fullName.trim())) {
       newErrors.fullName = 'Full Name must contain only letters.';
     }
-    
+
     // Email validation - must have @ and .
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim()) {
@@ -63,7 +60,7 @@ const Register = () => {
     } else if (!phonePattern.test(phone.trim())) {
       newErrors.phone = 'Phone number must be exactly 10 digits.';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -72,7 +69,7 @@ const Register = () => {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
-    
+
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -81,8 +78,7 @@ const Register = () => {
         fullName: fullName,
         email: email,
         password: password,
-        phoneNumber: phone,
-        availableBalance: 0.0
+        phoneNumber: phone
       };
 
       const response = await fetch('http://localhost:8081/api/investors/register', {
@@ -103,7 +99,7 @@ const Register = () => {
         const errorText = await response.text();
         setErrorMessage(errorText || 'Registration failed. Email might already be in use.');
       }
-    } catch  {
+    } catch {
       setErrorMessage('Could not connect to the server. Please try again later.');
     } finally {
       setIsSubmitting(false);
@@ -113,12 +109,12 @@ const Register = () => {
     <div className="register-page">
       <div className="register-card">
         <div className="brand-logo" aria-hidden="true">
-              <div className="hero-visual">
-                        <img src={logo1} alt="PortSure Large Logo" className="hero-logo-large" />
-                      </div>
+          <div className="hero-visual">
+            <img src={logo1} alt="PortSure Large Logo" className="hero-logo-large" />
           </div>
+        </div>
         <h2>Investor Registration</h2>
-        
+
         {/* Success and Error Messages */}
         {successMessage && (
           <div className="message-box success-message">
@@ -132,14 +128,14 @@ const Register = () => {
             <span>{errorMessage}</span>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} noValidate>
-          
+
           <div className="input-field">
             <label>Full Name</label>
-            <input 
-              type="text" 
-              value={fullName} 
+            <input
+              type="text"
+              value={fullName}
               onChange={(e) => {
                 // Only allow letters and spaces
                 const value = e.target.value;
@@ -148,33 +144,33 @@ const Register = () => {
                 }
               }}
               placeholder="Enter your full name"
-              required 
+              required
             />
             {errors.fullName && <span className="error-msg">{errors.fullName}</span>}
           </div>
 
           <div className="input-field">
             <label>Contact Email</label>
-            <input 
-              type="email" 
-              value={email} 
+            <input
+              type="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@example.com"
-              required 
+              required
             />
             {errors.email && <span className="error-msg">{errors.email}</span>}
           </div>
 
           <div className="input-field">
             <label>Create Password</label>
-            <input 
-              type="password" 
-              value={password} 
+            <input
+              type="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setShowPasswordHints(true)}
               onBlur={() => setShowPasswordHints(false)}
               placeholder="Min 6 chars (A-z, 0-9, !@#$)"
-              required 
+              required
             />
             {errors.password && <span className="error-msg">{errors.password}</span>}
             {showPasswordHints && !errors.password && (
@@ -200,9 +196,9 @@ const Register = () => {
 
           <div className="input-field">
             <label>Contact Phone</label>
-            <input 
-              type="tel" 
-              value={phone} 
+            <input
+              type="tel"
+              value={phone}
               onChange={(e) => {
                 // Only allow digits and limit to 10
                 const value = e.target.value;
@@ -212,7 +208,7 @@ const Register = () => {
               }}
               placeholder="10-digit mobile number"
               maxLength="10"
-              required 
+              required
             />
             {errors.phone && <span className="error-msg">{errors.phone}</span>}
           </div>
@@ -221,8 +217,8 @@ const Register = () => {
           <button type="submit" className="reg-btn" disabled={isSubmitting}>
             {isSubmitting ? 'Registering...' : 'Complete Registration'}
           </button>
-          
-         <div className="login-inline">
+
+          <div className="login-inline">
             <span className="login-text">Already registered?</span>
             <Link to="/login" className="login-small-btn">Login</Link>
           </div>
